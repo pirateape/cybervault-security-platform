@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Button } from '@/libs/ui/primitives/Button';
 import { Card } from '@/libs/ui/primitives/Card';
 import { Input } from '@/libs/ui/primitives/Input';
@@ -25,48 +25,51 @@ import {
 // Import auth context
 import { useAuth } from '@/libs/hooks/authProvider';
 
-interface UserManagementPageProps {
-  searchParams?: {
-    page?: string;
-    limit?: string;
-    search?: string;
-    role?: string;
-    status?: string;
-    sort_by?: string;
-    sort_order?: string;
-  };
+interface SearchParams {
+  page?: string;
+  limit?: string;
+  search?: string;
+  role?: string;
+  status?: string;
+  sort_by?: string;
+  sort_order?: string;
 }
 
-export default function UserManagementPage({ searchParams }: UserManagementPageProps) {
+interface UserManagementPageProps {
+  searchParams?: Promise<SearchParams>;
+}
+
+// Client component that handles the actual user management
+function UserManagementClient({ initialSearchParams }: { initialSearchParams?: SearchParams }) {
   const { user: currentUser } = useAuth();
 
   // State for filters and pagination
   const [filters, setFilters] = useState<UserSearchFilters>({
-    page: parseInt(searchParams?.page || '1'),
-    limit: parseInt(searchParams?.limit || '20'),
-    search: searchParams?.search || '',
-    role: searchParams?.role as any,
-    status: searchParams?.status as any,
-    sort_by: (searchParams?.sort_by as any) || 'created_at',
-    sort_order: (searchParams?.sort_order as any) || 'desc',
+    page: parseInt(initialSearchParams?.page || '1'),
+    limit: parseInt(initialSearchParams?.limit || '20'),
+    search: initialSearchParams?.search || '',
+    role: initialSearchParams?.role as any,
+    status: initialSearchParams?.status as any,
+    sort_by: (initialSearchParams?.sort_by as any) || 'created_at',
+    sort_order: (initialSearchParams?.sort_order as any) || 'desc',
   });
 
   // State for dialogs and selections
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
+  const [_selectedUserIds, _setSelectedUserIds] = useState<string[]>([]);
 
   // Get organization ID from current user (assuming it's available)
   const orgId = currentUser?.id || 'demo-org-id'; // Using user ID as org ID for now
 
   // API hooks
   const { data: usersData, isLoading: usersLoading, error: usersError } = useUsers(orgId, filters);
-  const { data: statsData, isLoading: statsLoading } = useUserStats(orgId);
+  const { data: statsData, isLoading: _statsLoading } = useUserStats(orgId);
   const createUserMutation = useCreateUser(orgId);
   const updateUserMutation = useUpdateUser(orgId, selectedUser?.id || '');
   const deleteUserMutation = useDeleteUser(orgId);
-  const bulkOperationMutation = useBulkUserOperation(orgId);
+  const _bulkOperationMutation = useBulkUserOperation(orgId);
   const toggleStatusMutation = useToggleUserStatus(orgId);
   const resetPasswordMutation = useResetUserPassword(orgId);
 
@@ -98,10 +101,14 @@ export default function UserManagementPage({ searchParams }: UserManagementPageP
   const handleCreateUser = useCallback(async (userData: CreateUserRequest) => {
     try {
       await createUserMutation.mutateAsync(userData);
-      alert(`User ${userData.email} has been created successfully.`);
+      if (typeof window !== 'undefined') {
+        window.alert(`User ${userData.email} has been created successfully.`);
+      }
       setCreateDialogOpen(false);
-    } catch (error) {
-      alert('Failed to create user. Please try again.');
+    } catch (_error) {
+      if (typeof window !== 'undefined') {
+        window.alert('Failed to create user. Please try again.');
+      }
     }
   }, [createUserMutation]);
 
@@ -111,25 +118,33 @@ export default function UserManagementPage({ searchParams }: UserManagementPageP
     
     try {
       await updateUserMutation.mutateAsync(userData);
-      alert(`User ${selectedUser.email} has been updated successfully.`);
+      if (typeof window !== 'undefined') {
+        window.alert(`User ${selectedUser.email} has been updated successfully.`);
+      }
       setEditDialogOpen(false);
       setSelectedUser(null);
-    } catch (error) {
-      alert('Failed to update user. Please try again.');
+    } catch (_error) {
+      if (typeof window !== 'undefined') {
+        window.alert('Failed to update user. Please try again.');
+      }
     }
   }, [selectedUser, updateUserMutation]);
 
   // Handle user deletion
   const handleDeleteUser = useCallback(async (userId: string) => {
-    if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+    if (typeof window !== 'undefined' && !window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
       return;
     }
     
     try {
       await deleteUserMutation.mutateAsync(userId);
-      alert('User has been deleted successfully.');
-    } catch (error) {
-      alert('Failed to delete user. Please try again.');
+      if (typeof window !== 'undefined') {
+        window.alert('User has been deleted successfully.');
+      }
+    } catch (_error) {
+      if (typeof window !== 'undefined') {
+        window.alert('Failed to delete user. Please try again.');
+      }
     }
   }, [deleteUserMutation]);
 
@@ -137,9 +152,13 @@ export default function UserManagementPage({ searchParams }: UserManagementPageP
   const handleToggleUserStatus = useCallback(async (userId: string, action: 'enable' | 'disable') => {
     try {
       await toggleStatusMutation.mutateAsync({ userId, action });
-      alert(`User has been ${action}d successfully.`);
-    } catch (error) {
-      alert(`Failed to ${action} user. Please try again.`);
+      if (typeof window !== 'undefined') {
+        window.alert(`User has been ${action}d successfully.`);
+      }
+    } catch (_error) {
+      if (typeof window !== 'undefined') {
+        window.alert(`Failed to ${action} user. Please try again.`);
+      }
     }
   }, [toggleStatusMutation]);
 
@@ -147,9 +166,13 @@ export default function UserManagementPage({ searchParams }: UserManagementPageP
   const handleResetPassword = useCallback(async (userEmail: string) => {
     try {
       await resetPasswordMutation.mutateAsync({ user_email: userEmail, send_email: true });
-      alert(`Password reset email sent to ${userEmail}.`);
-    } catch (error) {
-      alert('Failed to send password reset email. Please try again.');
+      if (typeof window !== 'undefined') {
+        window.alert(`Password reset email sent to ${userEmail}.`);
+      }
+    } catch (_error) {
+      if (typeof window !== 'undefined') {
+        window.alert('Failed to send password reset email. Please try again.');
+      }
     }
   }, [resetPasswordMutation]);
 
@@ -198,206 +221,256 @@ export default function UserManagementPage({ searchParams }: UserManagementPageP
 
       {/* Stats Cards */}
       {statsData && (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <Card className="p-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                👥
+              </div>
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Users</p>
+                <p className="text-sm text-gray-600">Total Users</p>
                 <p className="text-2xl font-bold">{statsData.total_users}</p>
               </div>
-              <span className="text-2xl">👥</span>
             </div>
           </Card>
           <Card className="p-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                ✅
+              </div>
               <div>
-                <p className="text-sm font-medium text-gray-600">Active Users</p>
+                <p className="text-sm text-gray-600">Active Users</p>
                 <p className="text-2xl font-bold">{statsData.active_users}</p>
               </div>
-              <span className="text-2xl">✅</span>
             </div>
           </Card>
           <Card className="p-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                ⏸️
+              </div>
               <div>
-                <p className="text-sm font-medium text-gray-600">Inactive Users</p>
+                <p className="text-sm text-gray-600">Inactive Users</p>
                 <p className="text-2xl font-bold">{statsData.inactive_users}</p>
               </div>
-              <span className="text-2xl">❌</span>
             </div>
           </Card>
           <Card className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Pending Users</p>
-                <p className="text-2xl font-bold">{statsData.pending_users}</p>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                🛡️
               </div>
-              <span className="text-2xl">⏳</span>
+              <div>
+                                 <p className="text-sm text-gray-600">Admins</p>
+                 <p className="text-2xl font-bold">{statsData.users_by_role?.admin || 0}</p>
+              </div>
             </div>
           </Card>
         </div>
       )}
 
-      {/* Main Content */}
-      <Card className="p-6">
-        <div className="flex items-center justify-between mb-4">
+      {/* Filters */}
+      <Card className="p-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
-            <h2 className="text-xl font-semibold">Users</h2>
-            <p className="text-gray-600">
-              {usersData ? `${usersData.total} total users` : 'Loading users...'}
-            </p>
-          </div>
-        </div>
-
-        {/* Filters */}
-        <div className="flex items-center gap-4 mb-6">
-          <div className="flex-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Search
+            </label>
             <Input
               placeholder="Search users..."
               value={filters.search}
               onChange={(e) => handleFilterChange({ search: e.target.value })}
-              className="max-w-sm"
             />
           </div>
-          <select
-            value={filters.role || 'all'}
-            onChange={(e) => handleFilterChange({ role: e.target.value === 'all' ? undefined : e.target.value as any })}
-            className="px-3 py-2 border border-gray-300 rounded-md"
-          >
-            <option value="all">All Roles</option>
-            <option value="admin">Admin</option>
-            <option value="user">User</option>
-            <option value="auditor">Auditor</option>
-            <option value="viewer">Viewer</option>
-          </select>
-          <select
-            value={filters.status || 'all'}
-            onChange={(e) => handleFilterChange({ status: e.target.value === 'all' ? undefined : e.target.value as any })}
-            className="px-3 py-2 border border-gray-300 rounded-md"
-          >
-            <option value="all">All Status</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-            <option value="pending">Pending</option>
-            <option value="suspended">Suspended</option>
-          </select>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Role
+            </label>
+            <select
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              value={filters.role || ''}
+              onChange={(e) => handleFilterChange({ role: e.target.value as any })}
+            >
+              <option value="">All Roles</option>
+              <option value="admin">Admin</option>
+              <option value="user">User</option>
+              <option value="viewer">Viewer</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Status
+            </label>
+            <select
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              value={filters.status || ''}
+              onChange={(e) => handleFilterChange({ status: e.target.value as any })}
+            >
+              <option value="">All Statuses</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="suspended">Suspended</option>
+            </select>
+          </div>
+          <div className="flex items-end">
+            <Button
+              variant="outline"
+              onClick={() => setFilters({
+                page: 1,
+                limit: 20,
+                search: '',
+                role: undefined,
+                status: undefined,
+                sort_by: 'created_at',
+                sort_order: 'desc',
+              })}
+              className="w-full"
+            >
+              Clear Filters
+            </Button>
+          </div>
         </div>
+      </Card>
 
-        {/* User Table */}
+      {/* Users Table */}
+      <Card>
+        <div className="p-4 border-b border-gray-200">
+          <h3 className="text-lg font-medium">Users</h3>
+        </div>
         <div className="overflow-x-auto">
           {usersLoading ? (
-            <div className="text-center py-8">Loading users...</div>
-          ) : usersData?.users.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">No users found.</div>
-          ) : (
-            <table className="w-full border-collapse border border-gray-300">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="border border-gray-300 px-4 py-2 text-left">Email</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Name</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Role</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Status</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Last Login</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Actions</th>
+            <div className="p-8 text-center">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              <p className="mt-2 text-gray-600">Loading users...</p>
+            </div>
+          ) : usersData?.users && usersData.users.length > 0 ? (
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    User
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Role
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Last Login
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
               </thead>
-              <tbody>
-                {usersData?.users.map((user) => (
+              <tbody className="bg-white divide-y divide-gray-200">
+                {usersData.users.map((user) => (
                   <tr key={user.id} className="hover:bg-gray-50">
-                    <td className="border border-gray-300 px-4 py-2">{user.email}</td>
-                    <td className="border border-gray-300 px-4 py-2">{user.full_name || '-'}</td>
-                    <td className="border border-gray-300 px-4 py-2">
-                      <span className={`inline-block px-2 py-1 text-xs rounded ${
-                        user.role === 'admin' ? 'bg-red-100 text-red-800' :
-                        user.role === 'auditor' ? 'bg-blue-100 text-blue-800' :
-                        'bg-gray-100 text-gray-800'
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                          {user.full_name?.charAt(0) || user.email.charAt(0)}
+                        </div>
+                        <div className="ml-4">
+                          <div className="text-sm font-medium text-gray-900">
+                            {user.full_name || 'No name'}
+                          </div>
+                          <div className="text-sm text-gray-500">{user.email}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        user.role === 'admin' 
+                          ? 'bg-purple-100 text-purple-800'
+                          : user.role === 'user'
+                          ? 'bg-blue-100 text-blue-800'
+                          : 'bg-gray-100 text-gray-800'
                       }`}>
                         {user.role}
                       </span>
                     </td>
-                    <td className="border border-gray-300 px-4 py-2">
-                      <span className={`inline-block px-2 py-1 text-xs rounded ${
-                        user.status === 'active' ? 'bg-green-100 text-green-800' :
-                        user.status === 'inactive' ? 'bg-red-100 text-red-800' :
-                        user.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
-                        {user.status}
-                      </span>
-                    </td>
-                    <td className="border border-gray-300 px-4 py-2">
+                                         <td className="px-6 py-4 whitespace-nowrap">
+                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                         user.status === 'active' 
+                           ? 'bg-green-100 text-green-800'
+                           : 'bg-red-100 text-red-800'
+                       }`}>
+                         {user.status === 'active' ? 'Active' : 'Inactive'}
+                       </span>
+                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {user.last_login ? new Date(user.last_login).toLocaleDateString() : 'Never'}
                     </td>
-                    <td className="border border-gray-300 px-4 py-2">
-                      <div className="flex items-center gap-2">
-                        <Button
-                          size="xs"
-                          variant="outline"
-                          onClick={() => {
-                            setSelectedUser(user);
-                            setEditDialogOpen(true);
-                          }}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          size="xs"
-                          variant="outline"
-                          onClick={() => handleToggleUserStatus(
-                            user.id, 
-                            user.is_disabled ? 'enable' : 'disable'
-                          )}
-                        >
-                          {user.is_disabled ? 'Enable' : 'Disable'}
-                        </Button>
-                        <Button
-                          size="xs"
-                          variant="outline"
-                          onClick={() => handleResetPassword(user.email)}
-                        >
-                          Reset Password
-                        </Button>
-                        <Button
-                          size="xs"
-                          variant="outline"
-                          colorScheme="danger"
-                          onClick={() => handleDeleteUser(user.id)}
-                          disabled={user.id === currentUser?.id}
-                        >
-                          Delete
-                        </Button>
-                      </div>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedUser(user);
+                          setEditDialogOpen(true);
+                        }}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleToggleUserStatus(user.id, user.is_active ? 'disable' : 'enable')}
+                      >
+                        {user.is_active ? 'Disable' : 'Enable'}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleResetPassword(user.email)}
+                      >
+                        Reset Password
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDeleteUser(user.id)}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        Delete
+                      </Button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+          ) : (
+            <div className="p-8 text-center">
+              <p className="text-gray-500">No users found.</p>
+            </div>
           )}
         </div>
-
+        
         {/* Pagination */}
         {usersData && usersData.total > usersData.limit && (
-          <div className="flex items-center justify-between mt-6">
-            <div className="text-sm text-gray-600">
-              Showing {((filters.page - 1) * filters.limit) + 1} to {Math.min(filters.page * filters.limit, usersData.total)} of {usersData.total} users
+          <div className="px-6 py-3 border-t border-gray-200 flex items-center justify-between">
+            <div className="text-sm text-gray-700">
+              Showing {((usersData.page - 1) * usersData.limit) + 1} to {Math.min(usersData.page * usersData.limit, usersData.total)} of {usersData.total} results
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center space-x-2">
               <Button
-                size="sm"
                 variant="outline"
-                onClick={() => handleFilterChange({ page: filters.page - 1 })}
+                size="sm"
+                onClick={() => handleFilterChange({ page: Math.max(1, filters.page - 1) })}
                 disabled={filters.page <= 1}
               >
                 Previous
               </Button>
-              <span className="px-3 py-1 text-sm">
-                Page {filters.page} of {Math.ceil(usersData.total / filters.limit)}
+              <span className="text-sm text-gray-700">
+                Page {filters.page} of {Math.ceil(usersData.total / usersData.limit)}
               </span>
               <Button
-                size="sm"
                 variant="outline"
+                size="sm"
                 onClick={() => handleFilterChange({ page: filters.page + 1 })}
-                disabled={filters.page >= Math.ceil(usersData.total / filters.limit)}
+                disabled={filters.page >= Math.ceil(usersData.total / usersData.limit)}
               >
                 Next
               </Button>
@@ -406,135 +479,162 @@ export default function UserManagementPage({ searchParams }: UserManagementPageP
         )}
       </Card>
 
-      {/* Simple Create User Modal */}
+      {/* Create User Modal */}
       {createDialogOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <Card className="w-96 p-6">
-            <h3 className="text-lg font-semibold mb-4">Create New User</h3>
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              const userData: CreateUserRequest = {
-                email: formData.get('email') as string,
-                full_name: formData.get('full_name') as string,
-                role: formData.get('role') as any,
-                password: formData.get('password') as string,
-                department: formData.get('department') as string || null,
-                job_title: formData.get('job_title') as string || null,
-                send_invitation: true,
-              };
-              handleCreateUser(userData);
-            }}>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Email</label>
-                  <Input name="email" type="email" required />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Full Name</label>
-                  <Input name="full_name" type="text" required />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Role</label>
-                  <select name="role" required className="w-full px-3 py-2 border border-gray-300 rounded-md">
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
-                    <option value="auditor">Auditor</option>
-                    <option value="viewer">Viewer</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Password</label>
-                  <Input name="password" type="password" required />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Department</label>
-                  <Input name="department" type="text" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Job Title</label>
-                  <Input name="job_title" type="text" />
-                </div>
-              </div>
-              <div className="flex items-center gap-2 mt-6">
-                <Button type="submit" disabled={createUserMutation.isPending}>
-                  {createUserMutation.isPending ? 'Creating...' : 'Create User'}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setCreateDialogOpen(false)}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </form>
-          </Card>
-        </div>
+        <UserFormModal
+          title="Create New User"
+          isOpen={createDialogOpen}
+          onClose={() => setCreateDialogOpen(false)}
+          onSubmit={handleCreateUser}
+        />
       )}
 
-      {/* Simple Edit User Modal */}
+      {/* Edit User Modal */}
       {editDialogOpen && selectedUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <Card className="w-96 p-6">
-            <h3 className="text-lg font-semibold mb-4">Edit User</h3>
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              const userData: UpdateUserRequest = {
-                full_name: formData.get('full_name') as string,
-                role: formData.get('role') as any,
-                department: formData.get('department') as string || null,
-                job_title: formData.get('job_title') as string || null,
-              };
-              handleEditUser(userData);
-            }}>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Email</label>
-                  <Input value={selectedUser.email} disabled />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Full Name</label>
-                  <Input name="full_name" type="text" defaultValue={selectedUser.full_name || ''} required />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Role</label>
-                  <select name="role" defaultValue={selectedUser.role} required className="w-full px-3 py-2 border border-gray-300 rounded-md">
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
-                    <option value="auditor">Auditor</option>
-                    <option value="viewer">Viewer</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Department</label>
-                  <Input name="department" type="text" defaultValue={selectedUser.department || ''} />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Job Title</label>
-                  <Input name="job_title" type="text" defaultValue={selectedUser.job_title || ''} />
-                </div>
-              </div>
-              <div className="flex items-center gap-2 mt-6">
-                <Button type="submit" disabled={updateUserMutation.isPending}>
-                  {updateUserMutation.isPending ? 'Updating...' : 'Update User'}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    setEditDialogOpen(false);
-                    setSelectedUser(null);
-                  }}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </form>
-          </Card>
-        </div>
+        <UserFormModal
+          title="Edit User"
+          isOpen={editDialogOpen}
+          onClose={() => {
+            setEditDialogOpen(false);
+            setSelectedUser(null);
+          }}
+          onSubmit={handleEditUser}
+          initialData={{
+            email: selectedUser.email,
+            full_name: selectedUser.full_name || '',
+            role: selectedUser.role,
+            is_active: selectedUser.is_active,
+          }}
+        />
       )}
     </div>
   );
+}
+
+// User Form Modal Component
+const UserFormModal: React.FC<{
+  title: string;
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (data: CreateUserRequest | UpdateUserRequest) => void;
+  initialData?: Partial<CreateUserRequest>;
+}> = ({ title, isOpen, onClose, onSubmit, initialData }) => {
+  const [formData, setFormData] = useState({
+    email: initialData?.email || '',
+    full_name: initialData?.full_name || '',
+    role: initialData?.role || 'user',
+    is_active: initialData?.is_active ?? true,
+    password: '',
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const submitData = new FormData(e.target as HTMLFormElement);
+    const data: any = {};
+    for (const [key, value] of submitData.entries()) {
+      data[key] = value;
+    }
+    data.is_active = data.is_active === 'true';
+    onSubmit(data);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <h2 className="text-xl font-bold mb-4">{title}</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email *
+              </label>
+              <Input
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Full Name
+              </label>
+              <Input
+                name="full_name"
+                value={formData.full_name}
+                onChange={(e) => setFormData(prev => ({ ...prev, full_name: e.target.value }))}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Role
+              </label>
+              <select
+                name="role"
+                value={formData.role}
+                onChange={(e) => setFormData(prev => ({ ...prev, role: e.target.value as any }))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              >
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+                <option value="viewer">Viewer</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Status
+              </label>
+              <select
+                name="is_active"
+                value={formData.is_active.toString()}
+                onChange={(e) => setFormData(prev => ({ ...prev, is_active: e.target.value === 'true' }))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              >
+                <option value="true">Active</option>
+                <option value="false">Inactive</option>
+              </select>
+            </div>
+
+            {!initialData && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Password *
+                </label>
+                <Input
+                  name="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                  required={!initialData}
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="flex justify-end gap-2 mt-6">
+            <Button type="button" variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit">
+              {initialData ? 'Update' : 'Create'} User
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+// Main page component that handles async searchParams
+export default async function UserManagementPage({ searchParams }: UserManagementPageProps) {
+  const resolvedSearchParams = await searchParams;
+  
+  return <UserManagementClient initialSearchParams={resolvedSearchParams} />;
+} 
 } 

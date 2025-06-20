@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
 
   let fileBuffer: Buffer;
   let contentType = 'text/csv';
-  let fileName = `custom-report.${format}`;
+  const fileName = `custom-report.${format}`;
 
   try {
     if (format === 'csv') {

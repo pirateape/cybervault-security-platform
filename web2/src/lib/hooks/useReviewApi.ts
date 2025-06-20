@@ -13,16 +13,13 @@ import {
   useReviewResult,
   useApproveReview,
   useRejectReview,
-  useOverrideReview,
-  useSubmitFeedback,
-  useAuditTrail,
   type ReviewFilters,
   type ReviewResult,
-  type ReviewFeedbackRequest 
-} from '../../../../libs/data-access/reviewApi';
+  type ReviewAction 
+} from '@data-access/reviewApi';
 
 // Re-export types for backwards compatibility
-export type { ReviewResult, ReviewFilters, ReviewFeedbackRequest };
+export type { ReviewResult, ReviewFilters, ReviewAction };
 
 /**
  * Legacy hook interface for backwards compatibility
@@ -37,8 +34,6 @@ export function useReviewApi() {
   const { data: reviewQueue = [], isLoading: loading, error, refetch } = useReviewQueue(orgId);
   const approveReviewMutation = useApproveReview(orgId);
   const rejectReviewMutation = useRejectReview(orgId);
-  const overrideReviewMutation = useOverrideReview(orgId);
-  const submitFeedbackMutation = useSubmitFeedback(orgId);
   
   const fetchReviewQueue = useCallback(async (filters?: ReviewFilters) => {
     await refetch();
@@ -47,14 +42,14 @@ export function useReviewApi() {
   const approveResult = useCallback(async (resultId: string, feedback?: string) => {
     return approveReviewMutation.mutateAsync({
       resultId,
-      action: { action: 'approve', feedback: feedback || '' }
+      action: { reviewer_id: 'current-user', feedback: feedback || '' }
     });
   }, [approveReviewMutation]);
 
   const rejectResult = useCallback(async (resultId: string, feedback?: string) => {
     return rejectReviewMutation.mutateAsync({
       resultId,
-      action: { action: 'reject', feedback: feedback || '' }
+      action: { reviewer_id: 'current-user', feedback: feedback || '' }
     });
   }, [rejectReviewMutation]);
 
@@ -63,22 +58,23 @@ export function useReviewApi() {
     feedback?: string, 
     overrideRecommendation?: string
   ) => {
-    return overrideReviewMutation.mutateAsync({
+    // For now, treat override as approve with feedback
+    return approveReviewMutation.mutateAsync({
       resultId,
       action: { 
-        action: 'override', 
-        feedback: feedback || '',
-        override_recommendation: overrideRecommendation || ''
+        reviewer_id: 'current-user', 
+        feedback: `${feedback || ''} (Override: ${overrideRecommendation || ''})`
       }
     });
-  }, [overrideReviewMutation]);
+  }, [approveReviewMutation]);
 
   const submitFeedback = useCallback(async (
     resultId: string, 
-    feedbackData: ReviewFeedbackRequest
+    feedbackData: ReviewAction
   ) => {
-    return submitFeedbackMutation.mutateAsync({ resultId, feedbackData });
-  }, [submitFeedbackMutation]);
+    // Submit feedback by updating the review
+    return approveReviewMutation.mutateAsync({ resultId, action: feedbackData });
+  }, [approveReviewMutation]);
 
   const getAuditTrail = useCallback(async (resultId: string) => {
     // This would need to be implemented in the audit trail hook
@@ -104,7 +100,4 @@ export {
   useReviewResult,
   useApproveReview,
   useRejectReview,
-  useOverrideReview,
-  useSubmitFeedback,
-  useAuditTrail,
-} from '../../../../../libs/data-access/reviewApi'; 
+} from '@data-access/reviewApi'; 

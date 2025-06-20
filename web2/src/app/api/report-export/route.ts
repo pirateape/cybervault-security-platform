@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
 
   let fileBuffer: Buffer;
   let contentType = 'text/csv';
-  let fileName = `${reportType}-report.${format}`;
+  const fileName = `${reportType}-report.${format}`;
 
   try {
     if (format === 'csv') {
