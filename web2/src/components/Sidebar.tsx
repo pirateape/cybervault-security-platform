@@ -88,6 +88,41 @@ const navItems = [
     ),
     description: 'Generate and view compliance reports'
   },
+  { 
+    label: 'Scans', 
+    href: '/scans', 
+    icon: (
+      <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M20.2 20.2l2.3-2.3"/>
+        <path d="M6.2 6.2 3.9 3.9"/>
+        <path d="M20.2 3.8 17.9 6.1"/>
+        <path d="M6.2 17.8l-2.3 2.3"/>
+      </svg>
+    ),
+    description: 'Manage security and compliance scans'
+  },
+  { 
+    label: 'Scan Progress', 
+    href: '/scans/progress', 
+    icon: (
+      <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="12,6 12,12 16,14"/>
+      </svg>
+    ),
+    description: 'Monitor real-time scan progress and status'
+  },
+  { 
+    label: 'Scan Analytics', 
+    href: '/scans/analytics', 
+    icon: (
+      <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+        <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
+      </svg>
+    ),
+    description: 'View scan history and performance analytics'
+  },
 ];
 
 export function Sidebar() {
