@@ -1,0 +1,29 @@
+{
+  "id": "cis-inactive-users-001",
+  "name": "CIS Inactive User Account Compliance",
+  "description": "Identify inactive users in Azure Entra ID (inactive > 90 days).",
+  "framework": "CIS",
+  "severity": "medium",
+  "conditions": {
+    "all": [
+      {
+        "fact": "user.last_login_days",
+        "operator": "greaterThan",
+        "value": 90
+      }
+    ]
+  },
+  "event": {
+    "type": "non_compliance",
+    "params": {
+      "message": "User account inactive for more than 90 days."
+    }
+  },
+  "parameters": {
+    "inactivity_threshold": 90
+  },
+  "is_active": true,
+  "version": "1.0.0",
+  "created_at": null,
+  "updated_at": null
+}

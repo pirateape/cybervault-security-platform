@@ -1,0 +1,23 @@
+
+> nx run web2:serve --port 4200
+
+   [1m[38;2;173;127;168m▲ Next.js 15.2.5[39m[22m
+   - Local:        http://localhost:4200
+   - Network:      http://192.168.1.17:4200
+ [32m[1m✓[22m[39m Starting...
+NX: Next.js SVGR support is deprecated. If used with turbopack, it may not work as expected and is not recommended. Please configure SVGR manually.
+NX: Next.js SVGR support is deprecated. If used with turbopack, it may not work as expected and is not recommended. Please configure SVGR manually.
+NX: Next.js SVGR support is deprecated. If used with turbopack, it may not work as expected and is not recommended. Please configure SVGR manually.
+ [32m[1m✓[22m[39m Ready in 1759ms
+ [37m[1m○[22m[39m Compiling / ...
+ [32m[1m✓[22m[39m Compiled / in 7.2s (5331 modules)
+ GET / [32m200[39m in 7489ms
+[?25h
+
+
+
+ NX   Successfully ran target serve for project web2
+
+
+View logs and run details at https://nx.app/runs/36Op7myYjp
+

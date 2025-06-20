@@ -1,0 +1,24 @@
+[project]
+name = "sec-project"
+version = "0.1.0"
+description = "Security compliance tool with AI-driven features."
+authors = ["Your Team <team@example.com>"]
+requires-python = ">=3.10"
+dependencies =[
+    "msgraph-sdk",
+    "azure-identity",
+    "msal>=1.7.4",
+    "pydantic[email]>=2.11.5",
+    "pytest>=8.4.0",
+    "pytest-asyncio>=1.0.0",
+    "python-dotenv>=1.1.0",
+    "python-multipart>=0.0.20",
+    "requests>=2.32.3",
+    "slowapi>=0.1.9",
+    "uvicorn>=0.34.3",
+    "msal>=1.32.3",
+]
+
+
+[tool.uv]
+# uv-specific settings can be added here

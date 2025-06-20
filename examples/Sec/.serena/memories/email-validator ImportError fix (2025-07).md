@@ -1,0 +1,3 @@
+- Fixed ImportError: email-validator is not installed (added to requirements.txt, updated README.md and Architecture.md).
+- Documented troubleshooting steps for pydantic EmailStr usage in FastAPI models (e.g., admin password reset).
+- Added checklist and recommendations to Tasks.md to periodically review pydantic/EmailStr usage and ensure email-validator is present in requirements.txt.

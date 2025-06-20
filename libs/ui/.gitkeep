@@ -1,0 +1,12 @@
+# ... existing code ...
+
+// Create directory structure for modular dashboard
+// libs/ui/dashboard/components/index.ts
+// libs/ui/dashboard/hooks/index.ts
+// libs/ui/dashboard/types/index.ts
+// libs/ui/dashboard/utils/index.ts
+
+// Directory marker for /libs/ui/primitives (atomic UI components)
+// This file ensures the directory is tracked in git.
+
+// ... existing code ... 

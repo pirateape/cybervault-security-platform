@@ -1,0 +1,3 @@
+- Fixed ImportError: email-validator is not installed by running 'uv add email-validator' and 'uv pip install -r pyproject.toml'.
+- Updated README.md, Architecture.md, and Tasks.md with troubleshooting and best practices for verifying dependencies after migration to uv.
+- Recommendation: After migration, always verify all required dependencies are present in pyproject.toml and uv.lock. If missing, use 'uv add <package>' and re-sync.

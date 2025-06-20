@@ -1,0 +1,268 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { resolve } from 'path';
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [
+    react(),
+    // Add bundle analyzer plugin for development
+    ...(process.env.ANALYZE ? [
+      {
+        name: 'bundle-analyzer',
+        generateBundle(options: any, bundle: any) {
+          const fs = require('fs');
+          const path = require('path');
+          
+          const analysis = Object.entries(bundle).map(([fileName, chunk]: [string, any]) => ({
+            fileName,
+            size: chunk.code?.length || 0,
+            type: chunk.type,
+            imports: chunk.imports || [],
+            exports: chunk.exports || []
+          }));
+          
+          fs.writeFileSync(
+            path.join(process.cwd(), 'bundle-analysis.json'),
+            JSON.stringify(analysis, null, 2)
+          );
+        }
+      }
+    ] : [])
+  ],
+  
+  // Development server configuration
+  server: {
+    port: 3000,
+    host: true,
+    open: true,
+    // Pre-warm frequently used files
+    warmup: {
+      clientFiles: [
+        './src/components/*.tsx',
+        './src/pages/*.tsx',
+        './src/context/*.tsx',
+        './src/utils/*.ts'
+      ]
+    }
+  },
+  
+  // Build optimization
+  build: {
+    target: 'es2020',
+    outDir: 'dist',
+    sourcemap: true,
+    
+    // Code splitting configuration
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Vendor chunk for large libraries
+          vendor: [
+            'react',
+            'react-dom',
+            'react-router-dom'
+          ],
+          
+          // UI library chunk
+          ui: [
+            '@chakra-ui/react',
+            '@emotion/react',
+            '@emotion/styled',
+            'framer-motion'
+          ],
+          
+          // Data/API chunk
+          data: [
+            '@tanstack/react-query',
+            '@supabase/supabase-js'
+          ],
+          
+          // Chart/visualization chunk
+          charts: [
+            'recharts'
+          ],
+          
+          // Form handling chunk
+          forms: [
+            'react-hook-form',
+            '@hookform/resolvers',
+            'zod'
+          ],
+          
+          // Authentication chunk
+          auth: [
+            '@azure/msal-browser'
+          ],
+          
+          // Utils chunk
+          utils: [
+            'react-icons',
+            'react-dnd',
+            'react-dnd-html5-backend'
+          ]
+        },
+        
+        // Generate descriptive chunk names
+        chunkFileNames: (chunkInfo) => {
+          const facadeModuleId = chunkInfo.facadeModuleId ? 
+            chunkInfo.facadeModuleId.split('/').pop()?.replace(/\.[^.]*$/, '') : 
+            'chunk';
+          return `js/${facadeModuleId}-[hash].js`;
+        },
+        
+        // Optimize asset file names
+        assetFileNames: (assetInfo) => {
+          const info = assetInfo.name?.split('.') || [];
+          const ext = info[info.length - 1];
+          
+          if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(ext)) {
+            return `images/[name]-[hash][extname]`;
+          }
+          if (/css/i.test(ext)) {
+            return `css/[name]-[hash][extname]`;
+          }
+          if (/woff2?|eot|ttf|otf/i.test(ext)) {
+            return `fonts/[name]-[hash][extname]`;
+          }
+          return `assets/[name]-[hash][extname]`;
+        }
+      }
+    },
+    
+    // Minification options
+    minify: 'esbuild',
+    
+    // Enable CSS code splitting
+    cssCodeSplit: true,
+    
+    // Module preload configuration
+    modulePreload: {
+      polyfill: true,
+      resolveDependencies: (_filename: string, deps: string[]) => {
+        // Only preload critical chunks
+        return deps.filter(dep => 
+          dep.includes('vendor') || 
+          dep.includes('ui') || 
+          dep.includes('main')
+        );
+      }
+    },
+    
+    // Report compressed size
+    reportCompressedSize: true,
+    
+    // Chunk size warning limit
+    chunkSizeWarningLimit: 500,
+    
+    // Advanced options
+    commonjsOptions: {
+      include: [/node_modules/],
+      transformMixedEsModules: true
+    }
+  },
+  
+  // Dependency optimization
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom',
+      'react-router-dom',
+      '@chakra-ui/react',
+      '@emotion/react',
+      '@emotion/styled',
+      'framer-motion',
+      '@tanstack/react-query',
+      '@supabase/supabase-js',
+      'recharts',
+      'react-hook-form',
+      '@hookform/resolvers',
+      'zod',
+      '@azure/msal-browser',
+      'react-icons',
+      'react-dnd',
+      'react-dnd-html5-backend'
+    ],
+    exclude: [
+      // Exclude dev-only dependencies
+      '@testing-library/react',
+      '@testing-library/jest-dom',
+      '@testing-library/user-event'
+    ]
+  },
+  
+  // Path resolution
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, './src'),
+      '~': resolve(__dirname, './src'),
+      'components': resolve(__dirname, './src/components'),
+      'pages': resolve(__dirname, './src/pages'),
+      'utils': resolve(__dirname, './src/utils'),
+      'types': resolve(__dirname, './src/types'),
+      'context': resolve(__dirname, './src/context'),
+      'api': resolve(__dirname, './src/api')
+    },
+    extensions: ['.tsx', '.ts', '.jsx', '.js', '.json']
+  },
+  
+  // CSS configuration
+  css: {
+    devSourcemap: true,
+    modules: {
+      localsConvention: 'camelCase'
+    }
+  },
+  
+  // Environment variables
+  define: {
+    __DEV__: JSON.stringify(process.env.NODE_ENV === 'development'),
+    __PROD__: JSON.stringify(process.env.NODE_ENV === 'production'),
+    __TEST__: JSON.stringify(process.env.NODE_ENV === 'test')
+  },
+  
+  // Performance optimizations
+  esbuild: {
+    drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : [],
+    legalComments: 'none'
+  },
+  
+  // Preview server configuration
+  preview: {
+    port: 3001,
+    host: true,
+    open: true
+  },
+  
+  // Worker configuration
+  worker: {
+    format: 'es',
+    plugins: () => [react()]
+  }
+});
+
+// Monaco Editor web worker configuration (see https://github.com/microsoft/monaco-editor/blob/main/docs/integrate-esm.md)
+// @ts-ignore: MonacoEnvironment is injected for Monaco Editor worker support
+if (typeof window !== 'undefined') {
+  (globalThis as any).MonacoEnvironment = {
+    getWorker: function (_moduleId: string, label: string) {
+      switch (label) {
+        case 'json':
+          return new Worker('/node_modules/monaco-editor/esm/vs/language/json/json.worker?worker', { type: 'module' });
+        case 'css':
+        case 'scss':
+        case 'less':
+          return new Worker('/node_modules/monaco-editor/esm/vs/language/css/css.worker?worker', { type: 'module' });
+        case 'html':
+        case 'handlebars':
+        case 'razor':
+          return new Worker('/node_modules/monaco-editor/esm/vs/language/html/html.worker?worker', { type: 'module' });
+        case 'typescript':
+        case 'javascript':
+          return new Worker('/node_modules/monaco-editor/esm/vs/language/typescript/ts.worker?worker', { type: 'module' });
+        default:
+          return new Worker('/node_modules/monaco-editor/esm/vs/editor/editor.worker?worker', { type: 'module' });
+      }
+    }
+  };
+}

@@ -1,0 +1,1 @@
+ScanTriggerWidget now explicitly imports React and useState, and is fully documented. The button opens ScanTriggerModal, which is also documented and receives isOpen/onClose props. The modal's 'Trigger Scan' button triggers the scan action. This ensures the button always opens the modal and the modal is maintainable.

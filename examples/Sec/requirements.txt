@@ -1,0 +1,19 @@
+# DEPRECATED: Use pyproject.toml and uv.lock as the source of truth for dependencies.
+# This file is provided for compatibility only. See README.md for the modern workflow.
+# All backend dependencies should be listed here for legacy compatibility only.
+email-validator>=2.2.0
+fastapi>=0.115.12
+httpx>=0.28.1
+passlib[bcrypt]>=1.7.4
+pydantic[email]>=2.11.5
+pytest>=8.4.0
+pytest-asyncio>=1.0.0
+python-dotenv>=1.1.0
+python-multipart>=0.0.20
+requests>=2.32.3
+slowapi>=0.1.9
+uvicorn>=0.34.3
+python-jose[cryptography]
+msgraph-sdk
+azure-identity
+msal 

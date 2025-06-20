@@ -1,0 +1,52 @@
+# Task ID: 11
+# Title: Enhance Reporting and Dashboard Capabilities
+# Status: done
+# Dependencies: 6, 9
+# Priority: medium
+# Description: Improve dashboard with advanced reporting, drill-down analytics, and compliance scorecards.
+# Details:
+Add exportable reports, drill-down analytics, and compliance scorecards to the dashboard. Use Supabase data and React components for visualization.
+
+# Test Strategy:
+Test report generation, analytics, and dashboard interactivity.
+
+# Subtasks:
+## 1. Report Generation Framework Design [done]
+### Dependencies: None
+### Description: Design and implement the backend and frontend architecture for generating customizable reports, including data aggregation, filtering, and scheduling capabilities.
+### Details:
+Define report templates, data sources, and user requirements. Ensure scalability and maintainability for advanced reporting needs.
+<info added on 2025-06-16T13:23:51.230Z>
+Supabase data layer has been reviewed and extended with new SQL views and RPCs tailored for advanced reporting, analytics, and scorecards. All new database functions and views are fully designed and documented, ensuring readiness for frontend and API integration. The next step is implementing serverless API endpoints to enable data export and secure access.
+</info added on 2025-06-16T13:23:51.230Z>
+
+## 2. Analytics Implementation and Data Quality Checks [done]
+### Dependencies: 11.1
+### Description: Integrate analytics tracking and processing, ensuring data quality through validation checks, naming conventions, and automated testing procedures.
+### Details:
+Follow best practices for analytics engineering, including establishing a single source of truth and automating data validation in ETL/ELT pipelines.
+
+## 3. Scorecard Development [done]
+### Dependencies: 11.2
+### Description: Develop dynamic scorecards that summarize key performance indicators (KPIs) and metrics, supporting both real-time and historical analysis.
+### Details:
+Define KPIs with stakeholders, implement calculation logic, and ensure scorecards are easily configurable and visually clear.
+
+## 4. Data Visualization Implementation [done]
+### Dependencies: 11.3
+### Description: Create interactive and insightful data visualizations for reports and scorecards, using appropriate chart types and dashboards.
+### Details:
+Select visualization libraries/tools, design user-friendly dashboards, and ensure accessibility and responsiveness across devices.
+
+## 5. Export Functionality Development [done]
+### Dependencies: 11.4
+### Description: Implement export features for reports, scorecards, and visualizations, supporting formats such as PDF, Excel, and CSV.
+### Details:
+Ensure exported files maintain data integrity and visual fidelity, and provide options for scheduled or on-demand exports.
+
+## 6. UI/UX Testing and Optimization [done]
+### Dependencies: 11.5
+### Description: Conduct comprehensive UI/UX testing for all reporting, analytics, and visualization features to ensure usability, accessibility, and performance.
+### Details:
+Gather user feedback, perform usability tests, and iterate on design to optimize the user experience across all analytics modules.
+

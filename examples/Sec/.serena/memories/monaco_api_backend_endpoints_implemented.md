@@ -1,0 +1,1 @@
+Added POST /api/code-analysis and POST /api/ai-feedback endpoints to api.py. Used Pydantic models for request/response validation. Endpoints require authentication and org/user scoping. Currently return mock responses. Error handling and OpenAPI documentation included. Ready for frontend integration and further backend logic.

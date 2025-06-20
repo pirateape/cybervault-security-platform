@@ -1,0 +1,123 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.3, pytest-8.4.0, pluggy-1.6.0
+rootdir: /home/ape/Documents/src/sec-comp/apps/api/compliance_engine
+configfile: pytest.ini
+plugins: cov-6.2.0, asyncio-1.0.0, anyio-4.9.0, html-4.1.1, metadata-3.1.1, mock-3.14.1, typeguard-4.4.2
+asyncio: mode=Mode.AUTO, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 5 items
+
+apps/api/compliance_engine/tests/test_rules_api.py FFFF.
+ERROR: Coverage failure: total of 23 is less than fail-under=90
+                                                                         [100%]
+
+=================================== FAILURES ===================================
+_______________________________ test_create_rule _______________________________
+
+org_id = 'test-org-uuid'
+rule_payload = {'conditions': {'all': [{'fact': 'user.mfa_enabled', 'operator': 'equal', 'value': True}]}, 'created_at': None, 'description': 'desc', 'event': {'params': {'message': 'fail'}, 'type': 'non_compliance'}, ...}
+
+    def test_create_rule(org_id, rule_payload):
+        response = client.post(f"/rules/?org_id={org_id}", json=rule_payload)
+>       assert response.status_code == 201
+E       assert 422 == 201
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+apps/api/compliance_engine/tests/test_rules_api.py:99: AssertionError
+------------------------------ Captured log call -------------------------------
+ERROR    root:main.py:107 Failed to write audit log to Supabase: 401 Client Error: Unauthorized for url: https://zkapyrvkdidxglpwctfk.supabase.co/rest/v1/audit_log
+_______________________________ test_list_rules ________________________________
+
+org_id = 'test-org-uuid'
+rule_payload = {'conditions': {'all': [{'fact': 'user.mfa_enabled', 'operator': 'equal', 'value': True}]}, 'created_at': None, 'description': 'desc', 'event': {'params': {'message': 'fail'}, 'type': 'non_compliance'}, ...}
+
+    def test_list_rules(org_id, rule_payload):
+        store[rule_payload["id"]] = rule_payload.copy()
+        response = client.get(f"/rules/?org_id={org_id}")
+        assert response.status_code == 200
+>       assert response.json()[0]["id"] == rule_payload["id"]
+               ^^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+apps/api/compliance_engine/tests/test_rules_api.py:106: IndexError
+________________________________ test_get_rule _________________________________
+
+org_id = 'test-org-uuid'
+rule_payload = {'conditions': {'all': [{'fact': 'user.mfa_enabled', 'operator': 'equal', 'value': True}]}, 'created_at': None, 'description': 'desc', 'event': {'params': {'message': 'fail'}, 'type': 'non_compliance'}, ...}
+
+    def test_get_rule(org_id, rule_payload):
+        store[rule_payload["id"]] = rule_payload.copy()
+        response = client.get(f"/rules/1?org_id={org_id}")
+>       assert response.status_code == 200
+E       assert 404 == 200
+E        +  where 404 = <Response [404 Not Found]>.status_code
+
+apps/api/compliance_engine/tests/test_rules_api.py:111: AssertionError
+------------------------------ Captured log call -------------------------------
+ERROR    root:main.py:107 Failed to write audit log to Supabase: 401 Client Error: Unauthorized for url: https://zkapyrvkdidxglpwctfk.supabase.co/rest/v1/audit_log
+_______________________________ test_update_rule _______________________________
+
+org_id = 'test-org-uuid'
+rule_payload = {'conditions': {'all': [{'fact': 'user.mfa_enabled', 'operator': 'equal', 'value': True}]}, 'created_at': None, 'description': 'desc', 'event': {'params': {'message': 'fail'}, 'type': 'non_compliance'}, ...}
+
+    def test_update_rule(org_id, rule_payload):
+        store[rule_payload["id"]] = rule_payload.copy()
+        updated = rule_payload.copy()
+        updated["name"] = "Updated Rule"
+        response = client.put(f"/rules/1?org_id={org_id}", json=updated)
+>       assert response.status_code == 200
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+apps/api/compliance_engine/tests/test_rules_api.py:119: AssertionError
+------------------------------ Captured log call -------------------------------
+ERROR    root:main.py:107 Failed to write audit log to Supabase: 401 Client Error: Unauthorized for url: https://zkapyrvkdidxglpwctfk.supabase.co/rest/v1/audit_log
+=============================== warnings summary ===============================
+../../../.local/lib/python3.13/site-packages/pydantic/_internal/_config.py:323
+  /home/ape/.local/lib/python3.13/site-packages/pydantic/_internal/_config.py:323: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
+    warnings.warn(DEPRECATION_MESSAGE, DeprecationWarning)
+
+../../../.local/lib/python3.13/site-packages/pydantic/_internal/_config.py:373
+  /home/ape/.local/lib/python3.13/site-packages/pydantic/_internal/_config.py:373: UserWarning: Valid config keys have changed in V2:
+  * 'orm_mode' has been renamed to 'from_attributes'
+    warnings.warn(message, UserWarning)
+
+../../../.local/lib/python3.13/site-packages/pydantic/fields.py:1089: 10 warnings
+  /home/ape/.local/lib/python3.13/site-packages/pydantic/fields.py:1089: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
+    warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.13.3-final-0 ________________
+
+Name                                                      Stmts   Miss  Cover   Missing
+---------------------------------------------------------------------------------------
+apps/api/compliance_engine/__init__.py                        0      0   100%
+apps/api/compliance_engine/engine.py                         47     47     0%   1-84
+apps/api/compliance_engine/facts.py                          20     20     0%   1-39
+apps/api/compliance_engine/ingestion.py                      60     46    23%   13-15, 19, 23, 27, 31-39, 43-48, 52-55, 62-66, 70-88
+apps/api/compliance_engine/remediation.py                    68     38    44%   33-37, 40-45, 48-54, 57-67, 81, 84-89, 92, 95
+apps/api/compliance_engine/result_storage.py                 14     14     0%   1-37
+apps/api/compliance_engine/rule_schema.py                    25      0   100%
+apps/api/compliance_engine/rules_api.py                      58     25    57%   15-17, 24, 32, 35, 39-47, 51-59, 66
+apps/api/compliance_engine/scan_executor.py                   9      9     0%   1-23
+apps/api/compliance_engine/tests/__init__.py                  0      0   100%
+apps/api/compliance_engine/tests/conftest.py                 25      8    68%   9-11, 15, 23-25, 37
+apps/api/compliance_engine/tests/test_engine.py              81     81     0%   1-113
+apps/api/compliance_engine/tests/test_facts.py               29     29     0%   1-34
+apps/api/compliance_engine/tests/test_ingestion.py           55     55     0%   1-64
+apps/api/compliance_engine/tests/test_remediation.py         91     91     0%   1-136
+apps/api/compliance_engine/tests/test_result_storage.py      27     27     0%   1-32
+apps/api/compliance_engine/tests/test_rule_schema.py         24     24     0%   1-40
+apps/api/compliance_engine/tests/test_rules_api.py           99     47    53%   16-18, 20-21, 23-31, 33-41, 43-48, 50-51, 53-54, 56-68, 71, 100, 112, 120
+apps/api/compliance_engine/tests/test_scan_executor.py       26     26     0%   1-38
+---------------------------------------------------------------------------------------
+TOTAL                                                       758    587    23%
+Coverage HTML written to dir htmlcov
+FAIL Required test coverage of 90% not reached. Total coverage: 22.56%
+-- Generated html report: file:///home/ape/Documents/src/sec-comp/report.html --
+=========================== short test summary info ============================
+FAILED apps/api/compliance_engine/tests/test_rules_api.py::test_create_rule
+FAILED apps/api/compliance_engine/tests/test_rules_api.py::test_list_rules - ...
+FAILED apps/api/compliance_engine/tests/test_rules_api.py::test_get_rule - as...
+FAILED apps/api/compliance_engine/tests/test_rules_api.py::test_update_rule
+=================== 4 failed, 1 passed, 12 warnings in 0.82s ===================

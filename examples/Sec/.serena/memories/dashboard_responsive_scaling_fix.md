@@ -1,0 +1,1 @@
+Fixed dashboard widget scaling by increasing columns, setting breakpoints, and adding min/max widths for all widgets. Unified layouts for all breakpoints. Updated Tasks.md, README.md, and Architecture.md. Added recommendations for regression/UI tests and code review for responsive layout.

@@ -1,0 +1,1 @@
+Integrated the admin password reset UI by updating frontend/src/pages/UserManagement.tsx to render the UserManagement component from components/. This ensures the reset password button and dialog are now visible and functional for admins. All user management actions are now handled in the component. Next: verify UI, update documentation, and track in Tasks.md.

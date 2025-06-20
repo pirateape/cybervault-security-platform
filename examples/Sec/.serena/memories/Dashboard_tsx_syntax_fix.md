@@ -1,0 +1,1 @@
+Removed a malformed/incomplete JSX/TSX fragment from Dashboard.tsx (lines 17-40) that caused an 'Unexpected token' error. The file should now be free of syntax errors. Next, rebuild and verify, then update documentation and tracking files.

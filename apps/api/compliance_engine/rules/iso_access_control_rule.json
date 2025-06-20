@@ -1,0 +1,29 @@
+{
+  "id": "iso-access-control-001",
+  "name": "ISO 27001 Access Control Review Compliance",
+  "description": "Ensure user access rights are reviewed at least every 6 months.",
+  "framework": "ISO27001",
+  "severity": "medium",
+  "conditions": {
+    "all": [
+      {
+        "fact": "user.last_access_review_months",
+        "operator": "lessThanEqual",
+        "value": 6
+      }
+    ]
+  },
+  "event": {
+    "type": "non_compliance",
+    "params": {
+      "message": "User access rights have not been reviewed in the last 6 months."
+    }
+  },
+  "parameters": {
+    "review_interval_months": 6
+  },
+  "is_active": true,
+  "version": "1.0.0",
+  "created_at": null,
+  "updated_at": null
+}

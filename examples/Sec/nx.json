@@ -1,0 +1,100 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "npmScope": "sec",
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "nx/tasks-runners/default",
+      "options": {
+        "cacheableOperations": ["build", "lint", "test", "e2e"]
+      }
+    }
+  },
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "test": {
+      "dependsOn": ["build"]
+    },
+    "e2e": {
+      "dependsOn": ["build"]
+    },
+    "lint": {
+      "outputs": []
+    }
+  },
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "production": [
+      "default",
+      "!{projectRoot}/**/*.spec.ts",
+      "!{projectRoot}/**/*.test.ts"
+    ],
+    "sharedGlobals": []
+  },
+  "projects": {
+    "frontend": {
+      "root": "frontend",
+      "sourceRoot": "frontend/src",
+      "projectType": "application",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/vite:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/frontend"
+          },
+          "configurations": {
+            "development": {
+              "mode": "development"
+            },
+            "production": {
+              "mode": "production",
+              "aot": true,
+              "extractLicenses": true,
+              "namedChunks": false,
+              "optimization": true
+            }
+          }
+        },
+        "serve": {
+          "executor": "@nrwl/vite:dev-server",
+          "options": {
+            "buildTarget": "frontend:build"
+          },
+          "configurations": {
+            "development": {
+              "buildTarget": "frontend:build:development"
+            },
+            "production": {
+              "buildTarget": "frontend:build:production"
+            }
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["frontend/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["{workspaceRoot}/coverage/frontend"],
+          "options": {
+            "jestConfig": "frontend/jest.config.ts",
+            "passWithNoTests": true
+          }
+        },
+        "e2e": {
+          "executor": "@nrwl/playwright:playwright",
+          "outputs": ["{workspaceRoot}/test-results"],
+          "options": {
+            "config": "frontend/playwright.config.ts"
+          }
+        }
+      },
+      "tags": ["frontend", "react"]
+    }
+  }
+}

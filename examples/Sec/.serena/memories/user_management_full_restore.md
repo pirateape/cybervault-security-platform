@@ -1,0 +1,1 @@
+Restored full user management features in UserManagement component: role management (dropdown), disable/enable, delete actions, RBAC, status display, and reset password. All actions provide feedback and update UI. Linter errors fixed by adding null checks and removing unsupported isLoading prop from Select.

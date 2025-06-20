@@ -1,0 +1,52 @@
+# Task ID: 2
+# Title: Design and Implement Supabase Backend Schema
+# Status: done
+# Dependencies: 1
+# Priority: high
+# Description: Define and implement the database schema for organizations, users, scans, rules, and audit logs.
+# Details:
+Create tables for Organization (org_id), User (authentication, roles), Scan (jobs, results, status), Rule (built-in and custom), and Audit Log (user actions). Enable row-level security and end-to-end encryption. Use Supabase REST API (PostgREST) for data access.
+
+# Test Strategy:
+Test CRUD operations for each table, validate row-level security, and verify encryption.
+
+# Subtasks:
+## 1. Schema Design for All Entities [done]
+### Dependencies: None
+### Description: Analyze requirements, identify entities, define attributes, relationships, and constraints. Document the schema using an ERD and a data dictionary.
+### Details:
+Include primary keys, foreign keys, normalization, and naming conventions. Ensure the schema supports scalability and security best practices.
+
+## 2. Table Creation for Each Entity [done]
+### Dependencies: 2.1
+### Description: Translate the schema into SQL DDL statements to create tables for each entity, including columns, data types, keys, and constraints.
+### Details:
+Implement all relationships and indexes as defined in the schema. Validate table structures against the ERD and data dictionary.
+<info added on 2025-06-12T02:58:54.057Z>
+Starting implementation of table creation for each entity, including organizations, users, scans, rules, and audit logs. All DDL and schema files will be verified to ensure explicit primary keys, unique constraints, and indexes are present for each table. Will follow up-to-date best practices for Supabase and PostgreSQL, such as using appropriate data types, enforcing NOT NULL and UNIQUE constraints, and preferring UUIDs for primary keys where global uniqueness is needed. All DDL will be checked for robustness and idempotency. Any changes or issues encountered during this process will be documented.
+</info added on 2025-06-12T02:58:54.057Z>
+
+## 3. Implement Row-Level Security [done]
+### Dependencies: 2.2
+### Description: Configure row-level security policies to restrict data access based on user roles or attributes.
+### Details:
+Define and apply security policies for each table as required, ensuring compliance with data protection requirements.
+
+## 4. Enable Data Encryption [done]
+### Dependencies: 2.2
+### Description: Set up encryption for data at rest and in transit for all tables and sensitive columns.
+### Details:
+Implement database-native encryption features and verify encryption settings for compliance and effectiveness.
+
+## 5. Set Up REST API Access [done]
+### Dependencies: 2.3, 2.4
+### Description: Develop and configure RESTful API endpoints to provide secure access to the database entities.
+### Details:
+Ensure the API enforces authentication, authorization, and integrates with row-level security and encryption mechanisms.
+
+## 6. CRUD Operation Testing [done]
+### Dependencies: 2.5
+### Description: Test Create, Read, Update, and Delete operations via the REST API for all entities, verifying security and data integrity.
+### Details:
+Validate that row-level security and encryption are enforced during all operations. Document and resolve any issues found.
+

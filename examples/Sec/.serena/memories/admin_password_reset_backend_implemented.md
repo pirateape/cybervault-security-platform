@@ -1,0 +1,1 @@
+Implemented POST /api/admin/reset-password endpoint in api.py. Requires admin authentication, accepts user email, uses Supabase Admin API to trigger password reset email, logs the action, and handles errors. OpenAPI schema and docstring included. Next: frontend UI integration and tests.

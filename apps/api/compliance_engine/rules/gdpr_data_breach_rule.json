@@ -1,0 +1,29 @@
+{
+  "id": "gdpr-data-breach-001",
+  "name": "GDPR Data Breach Notification Compliance",
+  "description": "Ensure data breaches are reported within 72 hours as required by GDPR.",
+  "framework": "GDPR",
+  "severity": "critical",
+  "conditions": {
+    "all": [
+      {
+        "fact": "incident.breach_notification_hours",
+        "operator": "lessThanEqual",
+        "value": 72
+      }
+    ]
+  },
+  "event": {
+    "type": "non_compliance",
+    "params": {
+      "message": "Data breach was not reported within 72 hours."
+    }
+  },
+  "parameters": {
+    "notification_hours": 72
+  },
+  "is_active": true,
+  "version": "1.0.0",
+  "created_at": null,
+  "updated_at": null
+}

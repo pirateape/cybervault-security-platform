@@ -1,0 +1,3 @@
+- Fixed: Wrapped ScanTriggerModal's ModalContent in Chakra Portal to ensure modal visibility above dashboard grid/layout (2025-07).
+- Updated README.md, Architecture.md, Tasks.md with troubleshooting, documentation, and recommendations for regression testing and portal usage in dashboard modals.
+- Recommendation: Review all dashboard modals for proper portal usage and test for grid/overflow/z-index issues.

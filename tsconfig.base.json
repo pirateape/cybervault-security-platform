@@ -1,0 +1,19 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "moduleResolution": "Node",
+    "target": "ES2020",
+    "module": "ES2020",
+    "baseUrl": ".",
+    "paths": {
+      "@/libs/*": ["libs/*"],
+      "@web2/*": ["web2/src/*"],
+      "@data-access/*": ["libs/data-access/*"],
+      "@ui/*": ["libs/ui/*"]
+    },
+    "jsx": "react-jsx",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  }
+}

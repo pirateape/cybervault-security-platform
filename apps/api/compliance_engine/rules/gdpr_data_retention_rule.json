@@ -1,0 +1,29 @@
+{
+  "id": "gdpr-data-retention-001",
+  "name": "GDPR Data Retention Compliance",
+  "description": "Ensure user data is deleted after the retention period.",
+  "framework": "GDPR",
+  "severity": "high",
+  "conditions": {
+    "all": [
+      {
+        "fact": "user.data_retention_days",
+        "operator": "lessThanEqual",
+        "value": 365
+      }
+    ]
+  },
+  "event": {
+    "type": "non_compliance",
+    "params": {
+      "message": "User data has not been deleted after the retention period."
+    }
+  },
+  "parameters": {
+    "retention_period_days": 365
+  },
+  "is_active": true,
+  "version": "1.0.0",
+  "created_at": null,
+  "updated_at": null
+}

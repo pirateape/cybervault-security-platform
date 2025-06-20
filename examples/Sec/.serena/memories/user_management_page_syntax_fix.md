@@ -1,0 +1,1 @@
+Fixed a Vite/Babel syntax error in frontend/src/pages/UserManagement.tsx by removing stray JSX and duplicate export. The page now only imports and renders the UserManagement component from components/, resolving linter errors and ensuring correct integration for the admin password reset feature.

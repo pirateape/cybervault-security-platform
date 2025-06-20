@@ -1,0 +1,1 @@
+Removed a stray '$1' artifact from the top of DashboardLayoutProvider.tsx, which was left by a previous regex replacement and caused a ReferenceError. This error is now resolved. Next, rebuild and verify, then update documentation and tracking files. Add a checklist item to review for regex placeholder artifacts after automated code edits.

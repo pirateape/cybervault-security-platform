@@ -1,0 +1,1 @@
+Planned and documented a secure admin-initiated password reset feature for the dashboard. Admins can trigger password reset emails for users via a new backend endpoint and UI button, following Supabase best practices. Tasks.md, README.md, and Architecture.md updated. Next: implement backend endpoint, then frontend UI, then tests and docs.

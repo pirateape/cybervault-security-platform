@@ -1,0 +1,7 @@
+- Migrated Python dependency management to uv (pyproject.toml, uv.lock).
+- Installed uv, initialized project files, and imported requirements.txt.
+- Updated README.md and Architecture.md with uv usage and migration instructions.
+- Removed requirements.txt to enforce new workflow.
+- Updated Tasks.md with migration checklist and recommendations.
+- Updated CI/CD and developer workflow to use uv.
+- Recommendation: Periodically run `uv update` and review `uv.lock` for dependency freshness.

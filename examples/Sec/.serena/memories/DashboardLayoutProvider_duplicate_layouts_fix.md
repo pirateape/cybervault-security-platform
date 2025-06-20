@@ -1,0 +1,1 @@
+Fixed a duplicate or malformed 'layouts' declaration in DashboardLayoutProvider.tsx by replacing the entire layouts object with a clean, single declaration. This resolves the 'Identifier 'layouts' has already been declared' error. Next, address the Dashboard.tsx JSX/TSX syntax error and update documentation and tracking files.

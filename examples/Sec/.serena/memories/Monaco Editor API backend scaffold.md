@@ -1,0 +1,1 @@
+Scaffolded /api/code-analysis and /api/ai-feedback endpoints in api.py with generic async calls. Added extension points for OpenAI, HuggingFace, Ollama, or other LLM/static analysis services. Ensured robust error handling, logging, and OpenAPI documentation. Left clear TODOs for plugging in specific services. Ready for frontend integration and accessibility work.

@@ -1,0 +1,4 @@
+- Fixed: ScanTriggerWidget now renders ScanTriggerModal and opens the modal correctly when the Trigger Scan button is clicked.
+- Updated README.md, Architecture.md, Tasks.md with documentation, troubleshooting, and recommendations for regression testing and widget wiring.
+- No new dependencies required; requirements.txt updated with review note.
+- Recommendation: Periodically review all dashboard widgets for modal/component wiring issues and add regression tests for interactive widgets.

@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+pydantic
+tensorflow  # or scikit-learn, depending on model
+scikit-learn
+supabase 

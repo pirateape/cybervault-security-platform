@@ -1,0 +1,27 @@
+{
+  "id": "cis-firewall-001",
+  "name": "CIS Firewall Configuration Compliance",
+  "description": "Ensure all endpoints have a firewall enabled.",
+  "framework": "CIS",
+  "severity": "high",
+  "conditions": {
+    "all": [
+      {
+        "fact": "endpoint.firewall_enabled",
+        "operator": "equal",
+        "value": true
+      }
+    ]
+  },
+  "event": {
+    "type": "non_compliance",
+    "params": {
+      "message": "Endpoint does not have a firewall enabled."
+    }
+  },
+  "parameters": null,
+  "is_active": true,
+  "version": "1.0.0",
+  "created_at": null,
+  "updated_at": null
+}

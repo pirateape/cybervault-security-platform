@@ -1,0 +1,1 @@
+Implemented admin password reset UI in UserManagement.tsx. Admins see a 'Reset Password' button for each user, which opens a confirmation dialog and calls the backend endpoint. Success/error feedback is shown with Chakra UI Toast. Button is disabled for non-admins. All code is TypeScript-safe. Next: add tests and update documentation.

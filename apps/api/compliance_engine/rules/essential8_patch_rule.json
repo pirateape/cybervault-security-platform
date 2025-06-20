@@ -1,0 +1,29 @@
+{
+  "id": "essential8-patch-001",
+  "name": "Essential 8 Patch Management Compliance",
+  "description": "Ensure all Azure services are patched within the last 30 days.",
+  "framework": "Essential8",
+  "severity": "high",
+  "conditions": {
+    "all": [
+      {
+        "fact": "service.last_patch_days",
+        "operator": "lessThanEqual",
+        "value": 30
+      }
+    ]
+  },
+  "event": {
+    "type": "non_compliance",
+    "params": {
+      "message": "Service is not patched within the last 30 days."
+    }
+  },
+  "parameters": {
+    "patch_threshold": 30
+  },
+  "is_active": true,
+  "version": "1.0.0",
+  "created_at": null,
+  "updated_at": null
+}

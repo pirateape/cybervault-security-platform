@@ -1,0 +1,1 @@
+Exported UserManagement as the default export in frontend/src/components/UserManagement.tsx to enable correct importing in tests and other modules. This aligns with React and project conventions and resolves import errors in related test files.

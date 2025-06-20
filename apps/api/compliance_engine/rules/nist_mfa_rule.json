@@ -1,0 +1,27 @@
+{
+  "id": "nist-mfa-001",
+  "name": "NIST MFA Compliance",
+  "description": "Ensure all users have multi-factor authentication enabled.",
+  "framework": "NIST",
+  "severity": "high",
+  "conditions": {
+    "all": [
+      {
+        "fact": "user.mfa_enabled",
+        "operator": "equal",
+        "value": true
+      }
+    ]
+  },
+  "event": {
+    "type": "non_compliance",
+    "params": {
+      "message": "User does not have MFA enabled."
+    }
+  },
+  "parameters": null,
+  "is_active": true,
+  "version": "1.0.0",
+  "created_at": null,
+  "updated_at": null
+}

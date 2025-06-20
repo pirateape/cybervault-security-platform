@@ -1,0 +1,37 @@
+# Task ID: 7
+# Title: Implement Audit Logging for User Actions
+# Status: done
+# Dependencies: 2, 3
+# Priority: medium
+# Description: Log all user actions for compliance and security.
+# Details:
+Extend Supabase schema to include audit log table. Log key user actions (login, scan trigger, rule update, etc.). Ensure logs are immutable and accessible only to authorized roles.
+
+# Test Strategy:
+Test logging of user actions, verify immutability, and access control.
+
+# Subtasks:
+## 1. Extend Schema for Audit Logging [done]
+### Dependencies: None
+### Description: Modify the existing database schema to support audit logging. This includes adding new tables or fields to capture essential audit data such as user IDs, timestamps, event types, affected resources, and outcomes.
+### Details:
+Ensure the schema supports comprehensive and scalable logging. Plan for long-term storage and retention in accordance with compliance requirements. Consider using a standardized log format for consistency.
+
+## 2. Implement Logging Logic [done]
+### Dependencies: 7.1
+### Description: Develop and integrate the logic required to generate audit logs for relevant actions within the application. Ensure logs are generated automatically and asynchronously to avoid performance bottlenecks.
+### Details:
+Prefer implicit log generation tied to access checks and critical events. Include decision logs and annotations for context. Use dedicated functions to record logs without adding latency.
+
+## 3. Enforce Immutability of Audit Logs [done]
+### Dependencies: 7.2
+### Description: Implement mechanisms to ensure that audit logs, once written, cannot be altered or deleted. This is crucial for maintaining the integrity and trustworthiness of the audit trail.
+### Details:
+Use tamper-proof storage solutions and apply log protection measures. Consider cryptographic techniques or write-once storage to enforce immutability.
+
+## 4. Validate Access Control for Audit Logs [done]
+### Dependencies: 7.3
+### Description: Establish and test access control policies to restrict who can view, query, or manage audit logs. Ensure only authorized personnel have access, and all access is itself logged.
+### Details:
+Configure secure, role-based access to audit logs. Regularly review access permissions and audit log access events to detect unauthorized activity.
+

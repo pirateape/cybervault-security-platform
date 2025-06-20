@@ -1,0 +1,1 @@
+Refactored DashboardLayoutProvider to use react-grid-layout for drag-and-drop dashboard widgets. Layout is persisted per user in localStorage. Updated requirements.txt, README.md, Architecture.md, and Tasks.md. Added recommendations for E2E/UI tests, accessibility, and code review checklist for layout usability and persistence.

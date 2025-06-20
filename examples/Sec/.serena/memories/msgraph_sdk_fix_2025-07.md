@@ -1,0 +1,1 @@
+Resolved dependency and integration issues for Microsoft Graph API. Updated pyproject.toml and requirements.txt to use msgraph-sdk, azure-identity, and msal. Updated documentation and troubleshooting notes in README.md, Architecture.md, and Tasks.md. See Tasks.md for best practices and future audit checklist.

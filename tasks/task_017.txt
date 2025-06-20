@@ -1,0 +1,11 @@
+# Task ID: 17
+# Title: Implement Multi-Tenant Reporting and Dashboard Isolation
+# Status: pending
+# Dependencies: 11, 12
+# Priority: medium
+# Description: Refactor the reporting and dashboard modules to support strict tenant-level data isolation and customization within a multi-tenant architecture.
+# Details:
+Update the backend reporting and dashboard logic to enforce tenant context on all data queries and API endpoints, ensuring that users can only access reports and dashboards belonging to their organization. Integrate tenant-aware authentication and authorization checks, leveraging existing RBAC and Supabase multi-tenant schema. Implement tenant-specific configuration options for report formats, branding, and dashboard widgets. Ensure all export operations (CSV, PDF, Excel) are scoped to the tenant context. Update frontend components to display only tenant-relevant data and controls, and provide UI hooks for tenant admins to manage reporting preferences. Review and update documentation to reflect multi-tenant capabilities. Follow best practices for tenant isolation, security, and scalability, including regular code reviews and penetration testing to prevent cross-tenant data leakage.
+
+# Test Strategy:
+1. Create multiple tenants and users with varying roles; verify that each tenant can only access their own reports and dashboards. 2. Attempt cross-tenant access via API and UI to confirm strict isolation. 3. Test report export functionality for each tenant, ensuring correct data and branding. 4. Validate tenant-specific configuration options are respected in both backend and frontend. 5. Run automated integration and E2E tests covering multi-tenant scenarios, RBAC, and error handling. 6. Conduct security review and penetration testing focused on tenant isolation.

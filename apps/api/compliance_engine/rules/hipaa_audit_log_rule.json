@@ -1,0 +1,27 @@
+{
+  "id": "hipaa-audit-log-001",
+  "name": "HIPAA Audit Log Compliance",
+  "description": "Ensure audit logging is enabled for all PHI access events.",
+  "framework": "HIPAA",
+  "severity": "high",
+  "conditions": {
+    "all": [
+      {
+        "fact": "system.audit_log_enabled",
+        "operator": "equal",
+        "value": true
+      }
+    ]
+  },
+  "event": {
+    "type": "non_compliance",
+    "params": {
+      "message": "Audit logging is not enabled for PHI access events."
+    }
+  },
+  "parameters": null,
+  "is_active": true,
+  "version": "1.0.0",
+  "created_at": null,
+  "updated_at": null
+}

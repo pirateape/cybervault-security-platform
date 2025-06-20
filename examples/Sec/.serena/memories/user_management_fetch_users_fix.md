@@ -1,0 +1,1 @@
+Added user fetching logic to UserManagement component in frontend/src/components/UserManagement.tsx. Now fetches users for the current org from Supabase, handles loading and error states, and displays users in the table. Handles 406 errors gracefully. This resolves the blank page and enables admin features.

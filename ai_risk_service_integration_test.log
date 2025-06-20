@@ -1,0 +1,30 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.3, pytest-8.4.0, pluggy-1.6.0
+rootdir: /home/ape/Documents/src
+configfile: pyproject.toml
+plugins: cov-6.2.0, asyncio-1.0.0, anyio-4.9.0, html-4.1.1, metadata-3.1.1, mock-3.14.1, typeguard-4.4.2
+asyncio: mode=Mode.STRICT, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 7 items
+
+apps/ai_risk_service/tests/test_integration.py .......                   [100%]
+
+=============================== warnings summary ===============================
+../../../.local/lib/python3.13/site-packages/pydantic/_internal/_config.py:323
+  /home/ape/.local/lib/python3.13/site-packages/pydantic/_internal/_config.py:323: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
+    warnings.warn(DEPRECATION_MESSAGE, DeprecationWarning)
+
+../../../.local/lib/python3.13/site-packages/pydantic/_internal/_config.py:373
+  /home/ape/.local/lib/python3.13/site-packages/pydantic/_internal/_config.py:373: UserWarning: Valid config keys have changed in V2:
+  * 'schema_extra' has been renamed to 'json_schema_extra'
+    warnings.warn(message, UserWarning)
+
+sec-comp/apps/ai_risk_service/tests/test_integration.py::test_predict_valid
+  /home/ape/Documents/src/sec-comp/apps/ai_risk_service/main.py:127: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
+    "input": scan.dict() if hasattr(scan, 'dict') else dict(scan),
+
+sec-comp/apps/ai_risk_service/tests/test_integration.py::test_predict_valid
+  /home/ape/Documents/src/sec-comp/apps/ai_risk_service/main.py:139: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
+    result = model.predict(scan.dict())
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 7 passed, 4 warnings in 0.23s =========================

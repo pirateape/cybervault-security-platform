@@ -1,0 +1,4 @@
+- Removed legacy scan trigger/modal code from Dashboard.tsx; scan trigger flow is now handled exclusively by ScanTriggerWidget as a dashboard widget.
+- Documented modular, role-based dashboard widget approach in README.md and Architecture.md.
+- Added recommendations to periodically review dashboard widget communication and modularity for best practices and maintainability.
+- Updated Tasks.md with checklist items for these changes.

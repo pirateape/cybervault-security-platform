@@ -1,0 +1,1 @@
+Fixed runtime error in DashboardLayoutProvider: ResponsiveReactGridLayout (WidthProvider(Responsive)) must be used as a JSX component, not a function. Added explicit type to resolve TypeScript JSX error. Updated Tasks.md, README.md, and Architecture.md with troubleshooting and recommendations. Next: add regression test and error boundary for dashboard layout errors.

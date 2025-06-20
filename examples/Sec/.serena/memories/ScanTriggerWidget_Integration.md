@@ -1,0 +1,1 @@
+ScanTriggerWidget has been added to all dashboard layouts for all user roles in DashboardLayoutProvider.tsx. The widget appears in a prominent position and opens the ScanTriggerModal for scan initiation. Documentation and tracking files need to be updated to reflect this change.

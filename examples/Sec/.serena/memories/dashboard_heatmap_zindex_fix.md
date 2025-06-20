@@ -1,0 +1,1 @@
+Fixed dashboard widget overlap by setting zIndex: 0 and position: 'relative' on the root Box of HeatMapVisualization. Added type guards for riskLevel color indexing to fix linter errors. Documented the fix in code comments for future reference.

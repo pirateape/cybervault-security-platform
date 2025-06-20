@@ -1,0 +1,3 @@
+- Fixed: Wrapped UserManagement AlertDialogContent in Chakra Portal to ensure dialog visibility above dashboard grid/layout (2025-07).
+- Updated README.md, Architecture.md, Tasks.md with troubleshooting, documentation, and recommendations for regression testing and portal usage in dashboard dialogs.
+- Recommendation: Review all dashboard dialogs for proper portal usage and test for grid/overflow/z-index issues.

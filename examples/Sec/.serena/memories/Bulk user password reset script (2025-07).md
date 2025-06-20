@@ -1,0 +1,5 @@
+- Implemented scripts/reset_all_user_passwords.py: deletes all users and recreates them with password 'testpassword' for test environments only.
+- Documented usage, limitations, and warnings in README.md and Architecture.md.
+- Added checklist and recommendations in Tasks.md for future improvements (admin bulk reset endpoint, test user management utilities).
+- Added 'requests' to requirements.txt for backend/test scripts.
+- WARNING: This script is destructive and must not be used in production.

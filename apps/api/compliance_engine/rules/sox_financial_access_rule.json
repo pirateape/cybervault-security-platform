@@ -1,0 +1,27 @@
+{
+  "id": "sox-financial-access-001",
+  "name": "SOX Financial System Access Compliance",
+  "description": "Ensure financial system access is restricted to authorized users only.",
+  "framework": "SOX",
+  "severity": "critical",
+  "conditions": {
+    "all": [
+      {
+        "fact": "user.is_authorized_financial",
+        "operator": "equal",
+        "value": true
+      }
+    ]
+  },
+  "event": {
+    "type": "non_compliance",
+    "params": {
+      "message": "Unauthorized user has access to financial systems."
+    }
+  },
+  "parameters": null,
+  "is_active": true,
+  "version": "1.0.0",
+  "created_at": null,
+  "updated_at": null
+}

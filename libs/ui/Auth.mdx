@@ -1,0 +1,90 @@
+# Auth Component
+
+The Auth component provides a complete authentication experience for your application, supporting both email/password and social login methods.
+
+## Features
+
+- Email/password authentication
+- Social login (Google, GitHub)
+- Customizable appearance
+- Loading states and error handling
+- Redirect after successful authentication
+- TypeScript support
+- Dark mode compatible
+
+## Installation
+
+The Auth component is part of the UI library and uses the shared Supabase client from `data-access`.
+
+```bash
+# No additional installation needed if you're already using the UI library
+```
+
+## Usage
+
+```tsx
+import { Auth } from '@your-workspace/ui';
+
+function App() {
+  return (
+    <Auth 
+      redirectTo="/dashboard"
+      appearance="full"
+      providers={['email', 'google', 'github']}
+      onAuthSuccess={() => {
+        console.log('Successfully authenticated!');
+      }}
+    />
+  );
+}
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `redirectTo` | `string` | `'/'` | URL to redirect to after successful authentication |
+| `appearance` | `'minimal' \| 'full'` | `'full'` | UI appearance style |
+| `providers` | `Array<'google' \| 'github' \| 'email'>` | `['email']` | Authentication providers to display |
+| `onAuthSuccess` | `() => void` | `undefined` | Callback function called after successful authentication |
+
+## Examples
+
+### Minimal Email-Only Auth
+
+```tsx
+<Auth appearance="minimal" providers={['email']} />
+```
+
+### Full Social Login Experience
+
+```tsx
+<Auth 
+  appearance="full"
+  providers={['email', 'google', 'github']}
+  redirectTo="/dashboard"
+/>
+```
+
+### Custom Success Handler
+
+```tsx
+<Auth 
+  onAuthSuccess={() => {
+    analytics.track('user_signed_in');
+    router.push('/dashboard');
+  }}
+/>
+```
+
+## OAuth Provider Setup
+
+To use social login, you need to configure the OAuth providers in your Supabase project:
+
+1. Go to your Supabase project dashboard
+2. Navigate to Authentication > Providers
+3. Enable and configure the providers you want to use:
+   - Google: Requires OAuth client ID and secret
+   - GitHub: Requires OAuth App client ID and secret
+
+For detailed provider setup instructions, see the [Supabase OAuth documentation](https://supabase.com/docs/guides/auth/social-login). 

@@ -1,0 +1,1 @@
+Resolved SyntaxError caused by legacy 'jose' package (Python 2 only) being installed instead of 'python-jose[cryptography]'. Updated pyproject.toml and requirements.txt to remove 'jose' and add 'python-jose[cryptography]'. Updated README.md, Architecture.md, and Tasks.md with troubleshooting notes and future audit checklist. All JWT usage should import from 'python-jose'.

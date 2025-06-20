@@ -1,0 +1,49 @@
+{
+  "name": "web2",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "web2/src",
+  "projectType": "application",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project web2 --web",
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "root": "web2",
+        "outputPath": "dist/web2",
+        "config": "web2/next.config.js"
+      }
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "options": {
+        "buildTarget": "web2:build",
+        "dev": false,
+        "port": 3000
+      }
+    },
+    "dev": {
+      "executor": "@nx/next:server",
+      "options": {
+        "buildTarget": "web2:build",
+        "dev": true,
+        "port": 3000
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["web2/src/**/*.ts", "web2/src/**/*.tsx"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["coverage/web2"],
+      "options": {
+        "jestConfig": "web2/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}
