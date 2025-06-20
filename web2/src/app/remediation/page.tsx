@@ -170,7 +170,7 @@ const SortableActionCard: React.FC<{
         </div>
       )}
       
-      <div className="w-full bg-gray-200 rounded-full h-2">
+      <div className="w-full bg-gray-200 rounded-full h-2" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} aria-label={`Progress: ${progress}%`}>
         <div
           className={`h-2 rounded-full bg-${getStatusColor(action.status)}-500`}
           style={{ width: `${progress}%` }}
@@ -473,17 +473,34 @@ const RemediationManagementPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-lg">Loading remediation actions...</div>
+      <div className="flex items-center justify-center h-64" role="status" aria-live="polite">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <div className="text-lg text-gray-600">Loading remediation actions...</div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-lg text-red-600">
-          Error loading remediation actions: {error.message}
+      <div className="flex items-center justify-center h-64" role="alert" aria-live="assertive">
+        <div className="bg-red-50 border border-red-200 rounded-md p-6 max-w-md">
+          <div className="flex items-center space-x-3">
+            <div className="text-red-600">⚠️</div>
+            <div>
+              <h3 className="text-lg font-medium text-red-800">Error Loading Data</h3>
+              <p className="text-red-600 mt-1">
+                {error.message || 'Failed to load remediation actions. Please try again.'}
+              </p>
+              <button 
+                onClick={() => window.location.reload()} 
+                className="mt-3 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -531,6 +548,7 @@ const RemediationManagementPage: React.FC = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full"
+            aria-label="Search remediation actions"
           />
         </div>
         
@@ -538,6 +556,7 @@ const RemediationManagementPage: React.FC = () => {
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as RemediationStatus | 'all')}
           className="px-3 py-2 border border-gray-300 rounded-md"
+          aria-label="Filter by status"
         >
           <option value="all">All Statuses</option>
           <option value="open">Open</option>
@@ -553,6 +572,7 @@ const RemediationManagementPage: React.FC = () => {
           value={priorityFilter}
           onChange={(e) => setPriorityFilter(e.target.value as RemediationPriority | 'all')}
           className="px-3 py-2 border border-gray-300 rounded-md"
+          aria-label="Filter by priority"
         >
           <option value="all">All Priorities</option>
           <option value="critical">Critical</option>
@@ -565,6 +585,7 @@ const RemediationManagementPage: React.FC = () => {
           value={assigneeFilter}
           onChange={(e) => setAssigneeFilter(e.target.value)}
           className="px-3 py-2 border border-gray-300 rounded-md"
+          aria-label="Filter by assignee"
         >
           <option value="all">All Assignees</option>
           <option value="unassigned">Unassigned</option>
@@ -599,7 +620,7 @@ const RemediationManagementPage: React.FC = () => {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="flex gap-6 overflow-x-auto pb-4">
+        <div className="flex gap-6 overflow-x-auto pb-4" role="main" aria-label="Remediation actions kanban board">
           {columns.map((column) => (
             <KanbanColumnComponent
               key={column.id}
