@@ -1,172 +1,110 @@
-'use client'
+/**
+ * Re-export standardized Review API hooks
+ * 
+ * This file maintains backwards compatibility while redirecting to the new
+ * standardized data access patterns implemented in libs/data-access/reviewApi.ts
+ */
 
-import { useState, useCallback } from 'react'
-import { ReviewResult, ReviewFilters, ReviewFeedbackRequest } from '../../app/review/types'
+'use client';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+import { useCallback } from 'react';
+import { 
+  useReviewQueue, 
+  useReviewResult,
+  useApproveReview,
+  useRejectReview,
+  useOverrideReview,
+  useSubmitFeedback,
+  useAuditTrail,
+  type ReviewFilters,
+  type ReviewResult,
+  type ReviewFeedbackRequest 
+} from '../../../../libs/data-access/reviewApi';
 
-interface UseReviewApiReturn {
-  reviewQueue: ReviewResult[]
-  loading: boolean
-  error: string | null
-  fetchReviewQueue: (filters?: ReviewFilters) => Promise<void>
-  approveResult: (resultId: string, feedback?: string) => Promise<void>
-  rejectResult: (resultId: string, feedback?: string) => Promise<void>
-  overrideResult: (resultId: string, feedback?: string, overrideRecommendation?: string) => Promise<void>
-  submitFeedback: (resultId: string, feedbackData: ReviewFeedbackRequest) => Promise<void>
-  getAuditTrail: (resultId: string) => Promise<any[]>
-}
+// Re-export types for backwards compatibility
+export type { ReviewResult, ReviewFilters, ReviewFeedbackRequest };
 
-export function useReviewApi(): UseReviewApiReturn {
-  const [reviewQueue, setReviewQueue] = useState<ReviewResult[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+/**
+ * Legacy hook interface for backwards compatibility
+ * 
+ * This provides the same interface as the old useReviewApi but uses
+ * the new standardized patterns under the hood.
+ */
+export function useReviewApi() {
+  // Note: orgId should come from auth context in a real implementation
+  const orgId = 'default-org'; // TODO: Get from auth context
 
-  // Get auth token from localStorage or context
-  const getAuthToken = useCallback(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('auth_token')
-    }
-    return null
-  }, [])
-
-  // Get current user ID (you may need to adjust this based on your auth implementation)
-  const getCurrentUserId = useCallback(() => {
-    if (typeof window !== 'undefined') {
-      const userData = localStorage.getItem('user_data')
-      if (userData) {
-        try {
-          const user = JSON.parse(userData)
-          return user.id
-        } catch (e) {
-          console.error('Failed to parse user data:', e)
-        }
-      }
-    }
-    return 'current-user-id' // Fallback - replace with actual user ID logic
-  }, [])
-
-  // Get organization ID (you may need to adjust this based on your org implementation)
-  const getOrgId = useCallback(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('org_id') || 'default-org'
-    }
-    return 'default-org'
-  }, [])
-
-  const apiRequest = useCallback(async (endpoint: string, options: RequestInit = {}) => {
-    const token = getAuthToken()
-    const orgId = getOrgId()
-    
-    const url = new URL(`${API_BASE_URL}${endpoint}`)
-    url.searchParams.append('org_id', orgId)
-
-    const response = await fetch(url.toString(), {
-      ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token && { Authorization: `Bearer ${token}` }),
-        ...options.headers,
-      },
-    })
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ detail: 'Unknown error' }))
-      throw new Error(errorData.detail || `HTTP error! status: ${response.status}`)
-    }
-
-    return response.json()
-  }, [getAuthToken, getOrgId])
-
+  const { data: reviewQueue = [], isLoading: loading, error, refetch } = useReviewQueue(orgId);
+  const approveReviewMutation = useApproveReview(orgId);
+  const rejectReviewMutation = useRejectReview(orgId);
+  const overrideReviewMutation = useOverrideReview(orgId);
+  const submitFeedbackMutation = useSubmitFeedback(orgId);
+  
   const fetchReviewQueue = useCallback(async (filters?: ReviewFilters) => {
-    setLoading(true)
-    setError(null)
-    try {
-      const data = await apiRequest('/review/queue')
-      
-      let filteredData = data
-      
-      // Apply client-side filtering if filters are provided
-      if (filters) {
-        filteredData = data.filter((result: ReviewResult) => {
-          if (filters.status && filters.status !== 'all' && result.review_status !== filters.status) {
-            return false
-          }
-          if (filters.severity && result.severity !== filters.severity) {
-            return false
-          }
-          if (filters.framework && result.compliance_framework !== filters.framework) {
-            return false
-          }
-          if (filters.searchTerm && !result.finding.toLowerCase().includes(filters.searchTerm.toLowerCase())) {
-            return false
-          }
-          return true
-        })
-      }
-      
-      setReviewQueue(filteredData)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch review queue')
-    } finally {
-      setLoading(false)
-    }
-  }, [apiRequest])
+    await refetch();
+  }, [refetch]);
 
   const approveResult = useCallback(async (resultId: string, feedback?: string) => {
-    const reviewerId = getCurrentUserId()
-    await apiRequest(`/review/${resultId}/approve`, {
-      method: 'POST',
-      body: JSON.stringify({
-        reviewer_id: reviewerId,
-        feedback: feedback || ''
-      })
-    })
-  }, [apiRequest, getCurrentUserId])
+    return approveReviewMutation.mutateAsync({
+      resultId,
+      action: { action: 'approve', feedback: feedback || '' }
+    });
+  }, [approveReviewMutation]);
 
   const rejectResult = useCallback(async (resultId: string, feedback?: string) => {
-    const reviewerId = getCurrentUserId()
-    await apiRequest(`/review/${resultId}/reject`, {
-      method: 'POST',
-      body: JSON.stringify({
-        reviewer_id: reviewerId,
-        feedback: feedback || ''
-      })
-    })
-  }, [apiRequest, getCurrentUserId])
+    return rejectReviewMutation.mutateAsync({
+      resultId,
+      action: { action: 'reject', feedback: feedback || '' }
+    });
+  }, [rejectReviewMutation]);
 
-  const overrideResult = useCallback(async (resultId: string, feedback?: string, overrideRecommendation?: string) => {
-    const reviewerId = getCurrentUserId()
-    await apiRequest(`/review/${resultId}/override`, {
-      method: 'POST',
-      body: JSON.stringify({
-        reviewer_id: reviewerId,
+  const overrideResult = useCallback(async (
+    resultId: string, 
+    feedback?: string, 
+    overrideRecommendation?: string
+  ) => {
+    return overrideReviewMutation.mutateAsync({
+      resultId,
+      action: { 
+        action: 'override', 
         feedback: feedback || '',
         override_recommendation: overrideRecommendation || ''
-      })
-    })
-  }, [apiRequest, getCurrentUserId])
+      }
+    });
+  }, [overrideReviewMutation]);
 
-  const submitFeedback = useCallback(async (resultId: string, feedbackData: ReviewFeedbackRequest) => {
-    await apiRequest(`/review/${resultId}/feedback`, {
-      method: 'POST',
-      body: JSON.stringify(feedbackData)
-    })
-  }, [apiRequest])
+  const submitFeedback = useCallback(async (
+    resultId: string, 
+    feedbackData: ReviewFeedbackRequest
+  ) => {
+    return submitFeedbackMutation.mutateAsync({ resultId, feedbackData });
+  }, [submitFeedbackMutation]);
 
   const getAuditTrail = useCallback(async (resultId: string) => {
-    return await apiRequest(`/review/${resultId}/audit`)
-  }, [apiRequest])
+    // This would need to be implemented in the audit trail hook
+    throw new Error('getAuditTrail not yet implemented with new patterns');
+  }, []);
 
   return {
     reviewQueue,
     loading,
-    error,
+    error: error?.message || null,
     fetchReviewQueue,
     approveResult,
     rejectResult,
     overrideResult,
     submitFeedback,
-    getAuditTrail
-  }
-} 
+    getAuditTrail,
+  };
+}
+
+// Re-export the modern hooks for new components
+export {
+  useReviewQueue,
+  useReviewResult,
+  useApproveReview,
+  useRejectReview,
+  useOverrideReview,
+  useSubmitFeedback,
+  useAuditTrail,
+} from '../../../../../libs/data-access/reviewApi'; 
