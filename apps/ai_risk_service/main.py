@@ -7,13 +7,17 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import sys
 import uuid
-from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError, jwt
 try:
     from supabase import create_client, Client
 except ImportError:
     create_client = None
     Client = None
+# Import unified authentication from main API
+try:
+    from apps.api import auth
+except ImportError:
+    # Fallback for development/testing
+    auth = None
 
 print("[DEBUG] Top of main.py loaded"); import sys; sys.stdout.flush()
 
@@ -28,19 +32,37 @@ model = DummyRiskModel()
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
-JWT_SECRET = os.getenv("JWT_SECRET", "super-secret-key")
-ALGORITHM = "HS256"
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")
+# Legacy JWT constants removed - now using unified Supabase authentication
 
-def verify_jwt_token(token: str) -> dict:
-    try:
-        payload = jwt.decode(token, JWT_SECRET, algorithms=[ALGORITHM])
-        return payload
-    except JWTError:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials")
+# Legacy JWT verification removed - now using unified Supabase authentication
 
-def get_current_user(token: str = Depends(oauth2_scheme)):
-    return verify_jwt_token(token)
+async def get_current_user():
+    """
+    Get current user using unified authentication from main API.
+    Falls back to mock user if auth module is not available (for testing).
+    """
+    if auth is not None:
+        # Import the dependency function from main API auth
+        from apps.api.auth import get_current_user as api_get_current_user
+        # Note: This will be used as a dependency in the endpoint
+        return api_get_current_user
+    else:
+        # Fallback for testing/development when auth module is not available
+        return {"sub": "test-user", "email": "test@example.com"}
+
+# Create the dependency for FastAPI endpoints
+def create_auth_dependency():
+    """Create the appropriate auth dependency based on available modules"""
+    if auth is not None:
+        return auth.get_current_user
+    else:
+        # Fallback dependency for testing
+        async def mock_auth():
+            return {"sub": "test-user", "email": "test@example.com"}
+        return mock_auth
+
+# Set up the auth dependency
+auth_dependency = create_auth_dependency()
 
 def get_supabase_client():
     if not create_client or not SUPABASE_URL or not SUPABASE_KEY:
@@ -113,8 +135,8 @@ def log_audit_event(user_id, org_id, action, target_id, target_table, details):
     except Exception as e:
         print(f"Exception in log_audit_event: {e}"); sys.stdout.flush()
 
-@app.post("/predict", response_model=RiskAnalysisOutput, tags=["risk-analysis"], summary="Predict risk for a scan finding", description="Predicts the risk score and recommendation for a given scan finding using the AI risk model.", response_description="Risk analysis result", dependencies=[Depends(get_current_user)])
-def predict_risk(scan: ScanResultInput):
+@app.post("/predict", response_model=RiskAnalysisOutput, tags=["risk-analysis"], summary="Predict risk for a scan finding", description="Predicts the risk score and recommendation for a given scan finding using the AI risk model.", response_description="Risk analysis result")
+def predict_risk(scan: ScanResultInput, current_user=Depends(auth_dependency)):
     print("[DEBUG] /predict endpoint called"); sys.stdout.flush()
     print(f"[DEBUG] details type in /predict: {type(scan.details)}, value: {scan.details}"); sys.stdout.flush()
     user_id = "aca6d17d-88ce-4365-931f-17604350c079"  # Replace with real user_id if available

@@ -1,5 +1,6 @@
 import './global.css';
 import './cybervault.css';
+import './accessibility.css';
 import { Providers } from '../components/Providers';
 
 export const metadata = {
@@ -19,6 +20,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
+        <a href="#sidebar" className="skip-link">
+          Skip to navigation
+        </a>
         <Providers>{children}</Providers>
       </body>
     </html>

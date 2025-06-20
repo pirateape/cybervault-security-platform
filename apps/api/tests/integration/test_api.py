@@ -5,7 +5,6 @@ from unittest.mock import patch
 from apps.api import auth
 from apps.api.auth import require_org_role
 import time
-from jose import jwt
 from fastapi.security import OAuth2PasswordRequestForm
 import requests
 import builtins
@@ -20,9 +19,8 @@ def override_nonmember():
     return {'id': '00000000-0000-0000-0000-0000000000c3', 'role': 'user', 'org_id': '00000000-0000-0000-0000-000000000099'}
 
 def override_expired_token():
-    # Simulate an expired JWT (exp in the past)
-    expired_token = jwt.encode({"sub": "00000000-0000-0000-0000-0000000000a1", "exp": int(time.time()) - 100}, "super-secret-key", algorithm="HS256")
-    return expired_token
+    # Simulate an expired token string
+    return "expired.token.value"
 
 def override_invalid_token():
     # Simulate an invalid JWT (bad signature)

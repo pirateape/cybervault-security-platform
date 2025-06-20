@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, Depends, status, Query, APIRouter, Body, Path, BackgroundTasks
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Optional
 from . import supabase_client
 from . import auth
@@ -48,6 +49,19 @@ from src.api.routes import external_api
 load_dotenv()  # Loads environment variables from .env in the project root
 
 app = FastAPI(title="Security Compliance Tool API")
+
+# Add CORS middleware to allow requests from Next.js frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",  # Next.js development server
+        "http://localhost:3001",  # Alternative frontend port
+        "https://localhost:3000", # HTTPS variant
+    ],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allow_headers=["*"],
+)
 
 # Set up logging for audit and error logs
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')

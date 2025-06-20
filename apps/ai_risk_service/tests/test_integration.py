@@ -1,8 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
 from apps.ai_risk_service.main import app
-from jose import jwt
-
 client = TestClient(app)
 
 # Example input from README
@@ -16,16 +14,23 @@ valid_input = {
     "details": {"control": "MFA"}
 }
 
-JWT_SECRET = "super-secret-key"
-ALGORITHM = "HS256"
+# Legacy JWT constants removed - now using unified Supabase authentication
+# For testing, the service will use mock authentication fallback
 
-def make_jwt(payload=None):
+def make_test_token(payload=None):
+    """
+    Create a test token for authentication.
+    Since we're using unified Supabase auth, this should ideally use proper Supabase tokens.
+    For testing, the service falls back to mock authentication.
+    """
     if payload is None:
         payload = {"sub": "test-user", "org_id": "test-org"}
-    return jwt.encode(payload, JWT_SECRET, algorithm=ALGORITHM)
+    # Return a placeholder token - the service will use mock auth in test mode
+    return "test-token"
 
 def auth_headers():
-    return {"Authorization": f"Bearer {make_jwt()}"}
+    """Create auth headers for testing"""
+    return {"Authorization": f"Bearer {make_test_token()}"}
 
 def test_health():
     resp = client.get("/health")

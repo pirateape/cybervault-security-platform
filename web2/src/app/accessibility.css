@@ -1,0 +1,433 @@
+/* Accessibility CSS for WCAG 2.1 AA compliance */
+
+/* Skip Links */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: var(--color-primary);
+  color: var(--color-btn-primary-text);
+  padding: 8px;
+  text-decoration: none;
+  border-radius: 4px;
+  z-index: 1000;
+  font-weight: 600;
+  font-size: 14px;
+  transition: top 0.3s ease;
+}
+
+.skip-link:focus {
+  top: 6px;
+  outline: 3px solid rgb(var(--color-focus-ring));
+  outline-offset: 2px;
+}
+
+/* Focus Indicators */
+*:focus {
+  outline: 3px solid rgb(var(--color-focus-ring));
+  outline-offset: 2px;
+}
+
+/* Enhanced focus for interactive elements */
+button:focus,
+a:focus,
+input:focus,
+textarea:focus,
+select:focus,
+[tabindex="0"]:focus,
+[role="button"]:focus,
+[role="menuitem"]:focus {
+  outline: 3px solid rgb(var(--color-focus-ring));
+  outline-offset: 2px;
+  box-shadow: 0 0 0 1px rgba(var(--color-focus-ring), 0.2);
+}
+
+/* Focus within for containers */
+.focus-within:focus-within {
+  outline: 2px solid rgb(var(--color-focus-ring));
+  outline-offset: 1px;
+}
+
+/* Screen Reader Only Content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.sr-only-focusable:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  :root {
+    --color-primary: 0 0 0;
+    --color-background: 255 255 255;
+    --color-text: 0 0 0;
+    --color-border: 0 0 0;
+    --color-focus-ring: 0 100 200;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    border: 2px solid black !important;
+  }
+
+  .btn-primary {
+    background: black !important;
+    color: white !important;
+    border: 2px solid black !important;
+  }
+
+  .btn-secondary {
+    background: white !important;
+    color: black !important;
+    border: 2px solid black !important;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Improved Color Contrast */
+.text-contrast-high {
+  color: rgb(var(--color-text));
+  background: rgb(var(--color-background));
+}
+
+.bg-error-accessible {
+  background-color: rgb(192, 21, 47);
+  color: white;
+}
+
+.bg-success-accessible {
+  background-color: rgb(33, 128, 141);
+  color: white;
+}
+
+.bg-warning-accessible {
+  background-color: rgb(168, 75, 47);
+  color: white;
+}
+
+.bg-info-accessible {
+  background-color: rgb(98, 108, 113);
+  color: white;
+}
+
+/* Status Indicators with Non-Color Cues */
+.status-indicator {
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.status-indicator::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+}
+
+.status-indicator.status-error::before {
+  background-color: rgb(192, 21, 47);
+  content: '✕';
+  color: white;
+  font-size: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+}
+
+.status-indicator.status-success::before {
+  background-color: rgb(33, 128, 141);
+  content: '✓';
+  color: white;
+  font-size: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+}
+
+.status-indicator.status-warning::before {
+  background-color: rgb(168, 75, 47);
+  content: '!';
+  color: white;
+  font-size: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+}
+
+.status-indicator.status-pending::before {
+  background-color: rgb(98, 108, 113);
+  content: '○';
+  color: white;
+  font-size: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+/* Form Validation Styles */
+.form-field-error {
+  border: 2px solid rgb(192, 21, 47) !important;
+  background-color: rgba(192, 21, 47, 0.05);
+}
+
+.form-field-error:focus {
+  outline: 3px solid rgb(192, 21, 47);
+  outline-offset: 2px;
+}
+
+.form-error-message {
+  color: rgb(192, 21, 47);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-error-message::before {
+  content: '⚠';
+  font-size: 1rem;
+}
+
+/* Keyboard Navigation Helpers */
+.keyboard-navigable {
+  position: relative;
+}
+
+.keyboard-navigable:focus-within {
+  outline: 2px solid rgb(var(--color-focus-ring));
+  outline-offset: 1px;
+}
+
+/* Menu and Navigation Accessibility */
+[role="menu"] {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+[role="menuitem"] {
+  cursor: pointer;
+}
+
+[role="menuitem"]:focus {
+  background-color: rgba(var(--color-primary), 0.1);
+  outline: 2px solid rgb(var(--color-focus-ring));
+  outline-offset: -2px;
+}
+
+[aria-current="page"] {
+  font-weight: 600;
+  background-color: rgba(var(--color-primary), 0.1);
+  border-left: 4px solid rgb(var(--color-primary));
+}
+
+/* Table Accessibility */
+.accessible-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.accessible-table th,
+.accessible-table td {
+  border: 1px solid rgb(var(--color-border), 0.3);
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.accessible-table th {
+  background-color: rgba(var(--color-primary), 0.1);
+  font-weight: 600;
+}
+
+.accessible-table tbody tr:hover {
+  background-color: rgba(var(--color-primary), 0.05);
+}
+
+.accessible-table tbody tr:focus-within {
+  background-color: rgba(var(--color-primary), 0.1);
+  outline: 2px solid rgb(var(--color-focus-ring));
+  outline-offset: -2px;
+}
+
+/* Modal and Dialog Accessibility */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: rgb(var(--color-surface));
+  border-radius: 8px;
+  padding: 1.5rem;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content:focus {
+  outline: 3px solid rgb(var(--color-focus-ring));
+  outline-offset: 2px;
+}
+
+/* Loading States */
+.loading-spinner {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgba(var(--color-primary), 0.3);
+  border-radius: 50%;
+  border-top-color: rgb(var(--color-primary));
+  animation: spin 1s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-spinner {
+    animation: none;
+    border-top-color: rgb(var(--color-primary));
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Print Styles for Accessibility */
+@media print {
+  .skip-link,
+  .sr-only {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    clip: auto !important;
+    overflow: visible !important;
+  }
+
+  a::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+}
+
+/* Touch Target Sizing */
+button,
+a,
+input,
+textarea,
+select,
+[role="button"],
+[role="menuitem"],
+[tabindex="0"] {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ensure text inputs have adequate padding */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+textarea {
+  padding: 0.75rem;
+  line-height: 1.5;
+}
+
+/* Error and Success Announcements */
+[role="alert"] {
+  padding: 1rem;
+  border-radius: 4px;
+  margin: 1rem 0;
+  font-weight: 500;
+}
+
+[role="alert"].alert-error {
+  background-color: rgba(192, 21, 47, 0.1);
+  border: 1px solid rgb(192, 21, 47);
+  color: rgb(192, 21, 47);
+}
+
+[role="alert"].alert-success {
+  background-color: rgba(33, 128, 141, 0.1);
+  border: 1px solid rgb(33, 128, 141);
+  color: rgb(33, 128, 141);
+}
+
+[role="alert"].alert-warning {
+  background-color: rgba(168, 75, 47, 0.1);
+  border: 1px solid rgb(168, 75, 47);
+  color: rgb(168, 75, 47);
+}
+
+/* Utility Classes */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.focus-trap {
+  position: relative;
+}
+
+.focus-trap:focus-within {
+  outline: 2px solid rgb(var(--color-focus-ring));
+  outline-offset: 2px;
+} 
